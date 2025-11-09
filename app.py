@@ -1,9 +1,15 @@
-import os
 from flask import Flask, jsonify
 from db.connection import get_db_connection
+from routes.users import users_bp
+from routes.posts import posts_bp
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+
+# Register blueprints
+app.register_blueprint(users_bp, url_prefix='/api')
+app.register_blueprint(posts_bp, url_prefix='/api')
 
 @app.route('/')
 def home():

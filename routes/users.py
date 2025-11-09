@@ -17,7 +17,7 @@ def register():
     password = data['password']
     
     # Hash password
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     
     try:
         conn = get_db_connection()
@@ -25,8 +25,8 @@ def register():
         
         # Insert user
         cur.execute(
-            'INSERT INTO users (username, email, hashed_password) VALUES (%s, %s, %s) RETURNING id, username, email, created_at',
-            (username, email, hashed_password)
+            'INSERT INTO users (username, email, password_hash) VALUES (%s, %s, %s) RETURNING id, username, email, created_at',
+            (username, email, password_hash)
         )
         
         user = cur.fetchone()
