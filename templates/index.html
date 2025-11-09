@@ -1,0 +1,19 @@
+{% extends "base.html" %} {% block title %}Home - My Blog{% endblock %} {% block
+content %}
+<div class="posts">
+  <h2>Recent Posts</h2>
+
+  {% if posts %} {% for post in posts %}
+  <article class="post">
+    <h3>{{ post.title }}</h3>
+    <div class="post-meta">
+      <span class="author">By {{ post.username }}</span>
+      <span class="date">{{ post.created_at.strftime('%B %d, %Y') }}</span>
+    </div>
+    <p class="post-content">{{ post.content }}</p>
+  </article>
+  {% endfor %} {% else %}
+  <p>No posts yet. Be the first to write something!</p>
+  {% endif %}
+</div>
+{% endblock %}
