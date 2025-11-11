@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from db.connection import get_db_connection
 from routes.users import users_bp
 from routes.posts import posts_bp
@@ -13,7 +13,35 @@ app.register_blueprint(posts_bp, url_prefix='/api')
 
 @app.route('/')
 def home():
-    return jsonify({"message": "Welcome to the Flask Blog App!"})
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Get all posts with user information
+        cur.execute('''
+            SELECT 
+                posts.id,
+                posts.title,
+                posts.content,
+                posts.created_at,
+                users.username
+            FROM posts
+            JOIN users ON posts.user_id = users.id
+            ORDER BY posts.created_at DESC
+        ''')
+        
+        posts = cur.fetchall()
+        cur.close()
+        conn.close()
+        
+        return render_template('index.html', posts=posts)
+        
+    except Exception as e:
+        return render_template('index.html', posts=[], error=str(e))
+
+@app.route('/register')
+def register_page():
+    return render_template('register.html')
 
 @app.route('/test-db')
 def test_db():
