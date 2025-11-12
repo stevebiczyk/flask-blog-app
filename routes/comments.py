@@ -63,11 +63,11 @@ def get_comments(post_id):
         # Retrieve comments for the post
         cur.execute(
             '''
-            SELECT comments.id, comments.content, comments.created_at, users.username
+            SELECT comments.id, comments.content, comments.created_at, users.username, users.id AS user_id
             FROM comments
             JOIN users ON comments.user_id = users.id
             WHERE comments.post_id = %s
-            ORDER BY comments.created_at DESC
+            ORDER BY comments.created_at ASC
             ''',
             (post_id,)
         )

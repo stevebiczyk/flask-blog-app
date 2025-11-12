@@ -2,14 +2,21 @@ from flask import Flask, jsonify, render_template
 from db.connection import get_db_connection
 from routes.users import users_bp
 from routes.posts import posts_bp
+from routes.comments import comments_bp
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 # Register blueprints
 app.register_blueprint(users_bp, url_prefix='/api')
 app.register_blueprint(posts_bp, url_prefix='/api')
+app.register_blueprint(comments_bp, url_prefix='/api')
 
 @app.route('/')
 def home():
