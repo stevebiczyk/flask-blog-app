@@ -50,6 +50,10 @@ def home():
 def register_page():
     return render_template('register.html')
 
+@app.route('/login')
+def login_page():
+    return render_template('login.html')
+
 @app.route('/test-db')
 def test_db():
     try:

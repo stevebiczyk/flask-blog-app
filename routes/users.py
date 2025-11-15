@@ -86,7 +86,7 @@ def login():
 @users_bp.route('/logout', methods=['POST'])
 def logout():
     session.clear()
-    return jsonify({'message': 'Logout successful'}), 200
+    return jsonify({'message': 'Logged out successfully'}), 200
 
 @users_bp.route('/me', methods=['GET'])
 def get_current_user():

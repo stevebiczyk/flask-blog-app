@@ -18,11 +18,8 @@
           <li id="nav-register"><a href="/register">Register</a></li>
           <li id="nav-login"><a href="/login">Login</a></li>
           <li id="nav-user" style="display: none">
-            <span id="nav-username"
-              ><button onclick="logout()" class="logout-button">
-                Logout
-              </button></span
-            >
+            <span id="nav-username"></span>
+            <button onclick="logout()" class="logout-btn">Logout</button>
           </li>
         </ul>
       </div>
@@ -38,7 +35,8 @@
             document.getElementById("nav-login").style.display = "none";
             document.getElementById("nav-register").style.display = "none";
             document.getElementById("nav-user").style.display = "inline";
-            document.getElementById("nav-username").textContent = 'Welcome,' + data.user.username;
+            document.getElementById("nav-username").textContent =
+              "Welcome," + data.user.username;
           }
         } catch (error) {
           console.error("Error checking login status:", error);
@@ -47,12 +45,13 @@
 
       async function logout() {
         try {
-          avait fetch("/api/logout", {
+          await fetch("/api/logout", {
             method: "POST",
           });
           // Redirect to home page after logout
           window.location.href = "/";
         } catch (error) {
+          alert("Logout failed. Please try again.");
           console.error("Error during logout:", error);
         }
       }
