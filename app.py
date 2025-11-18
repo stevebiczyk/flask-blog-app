@@ -38,6 +38,23 @@ def home():
         ''')
         
         posts = cur.fetchall()
+        
+        # get comments for each post
+        for post in posts:
+            cur.execute('''
+                SELECT 
+                    comments.id,
+                    comments.content,
+                    comments.created_at,
+                    users.username
+                FROM comments
+                JOIN users ON comments.user_id = users.id
+                WHERE comments.post_id = %s
+                ORDER BY comments.created_at ASC
+            ''', (post['id'],))
+            post['comments'] = cur.fetchall()
+        
+        
         cur.close()
         conn.close()
         

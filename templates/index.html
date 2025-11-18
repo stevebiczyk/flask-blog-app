@@ -11,9 +11,102 @@ content %}
       <span class="date">{{ post.created_at.strftime('%B %d, %Y') }}</span>
     </div>
     <p class="post-content">{{ post.content }}</p>
+
+    <!-- Comments Section -->
+    <div class="comments-section">
+      <h4>Comments ({{ post.comments|length }})</h4>
+
+      {% if post.comments %}
+      <div class="comments-list">
+        {% for comment in post.comments %}
+        <div class="comment">
+          <div class="comment-meta">
+            <strong>{{ comment.username }}</strong>
+            <span class="comment-date"
+              >{{ comment.created_at.strftime('%B %d, %Y at %H:%M') }}</span
+            >
+          </div>
+          <p class="comment-content">{{ comment.content }}</p>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="no-comments">No comments yet. Be the first to comment!</p>
+      {% endif %}
+
+      <!-- Comment Form -->
+      <div class="comment-form">
+        <h5>Add a Comment</h5>
+        <form class="add-comment-form" data-post-id="{{ post.id }}">
+          <textarea
+            class="comment-input"
+            placeholder="Write your comment..."
+            rows="3"
+            required
+          ></textarea>
+          <button type="submit" class="comment-btn">Post Comment</button>
+          <div class="comment-message"></div>
+        </form>
+      </div>
+    </div>
   </article>
   {% endfor %} {% else %}
   <p>No posts yet. Be the first to write something!</p>
   {% endif %}
 </div>
+
+<script>
+  // Handle comment form submissions
+  document.querySelectorAll(".add-comment-form").forEach((form) => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const postId = this.dataset.postId;
+      const textarea = this.querySelector(".comment-input");
+      const commentMessage = form.querySelector(".comment-message");
+      const content = commentInput.value.trim();
+      const button = form.querySelector(".comment-btn");
+
+      if (!content) {
+        commentMessage.innerHTML =
+          '<p class="error">Please leave a comment...</p>';
+        return;
+      }
+
+      //Disable button to prevent multiple submissions
+      button.disabled = true;
+      button.textContent = "Posting comment...";
+
+      try {
+        const response = await fetch(`/api/posts/${postId}/comments`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ content: content }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          messageDiv.innerHTML = '<p class="success">Comment posted!</p>';
+          textarea.value = "";
+          // Reload the page to show the new comment
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        } else {
+          commentMessage.innerHTML = '<p class="error">' + data.error + "</p>";
+          button.disabled = false;
+          button.textContent = "Post Comment";
+        }
+      } catch (error) {
+        commentMessage.innerHTML =
+          '<p class="error">An error occurred. Please try again.</p>';
+        button.disabled = false;
+        button.textContent = "Post Comment";
+      }
+    });
+  });
+</script>
 {% endblock %}
