@@ -61,10 +61,10 @@ content %}
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const postId = this.dataset.postId;
-      const textarea = this.querySelector(".comment-input");
+      const postId = form.getAttribute("data-post-id");
+      const textarea = form.querySelector(".comment-input");
       const commentMessage = form.querySelector(".comment-message");
-      const content = commentInput.value.trim();
+      const content = textarea.value.trim();
       const button = form.querySelector(".comment-btn");
 
       if (!content) {
