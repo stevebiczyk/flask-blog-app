@@ -1,0 +1,72 @@
+{& extends "base.html" %} {% block title %}Create Post - My Blog{% endblock %}
+{% block content %}
+<div class="form-container">
+  <h2>Create a New Post</h2>
+  <form id="createPostForm">
+    <div class="form-group">
+      <label for="title">Title:</label>
+      <input type="text" id="title" name="title" required maxlenght="200" />
+    </div>
+    <div class="form-group">
+      <label for="content">Content:</label>
+      <textarea id="content" name="content" rows="10" required></textarea>
+    </div>
+    <button type="submit" class="submit-btn">Create Post</button>
+  </form>
+  <div id="message"></div>
+</div>
+
+<script>
+  document
+    .getElementById("createPostForm")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById("title").value.trim();
+      const content = document.getElementById("content").value.trim();
+      const messageDiv = document.getElementById("message");
+      const button = this.querySelector('button[type="submit"]');
+
+      if (!title || !content) {
+        messageDiv.innerHTML =
+          '<p class="error">Both title and content are required.</p>';
+        messageDiv.style.color = "red";
+        return;
+      }
+
+      // Disable button during submission
+      button.disabled = true;
+      button.textContent = "Creating post...";
+
+      try {
+        const response = await fetch("/api/posts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ title: title, content: content }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          messageDiv.innerHTML =
+            '<p class="success">Post created successfully!</p>';
+          messageDiv.style.color = "green";
+          setTimeout(function () {
+            window.location.href = "/";
+          }, 1000);
+        } else {
+          messageDiv.innerHTML = '<p class="error">' + data.error + "</p>";
+          button.disabled = false;
+          button.textContent = "Create Post";
+        }
+      } catch (error) {
+        messageDiv.innerHTML =
+          '<p class="error">An error occurred. Please try again.</p>';
+        button.disabled = false;
+        button.textContent = "Create Post";
+      }
+    });
+</script>
+{% endblock %}
