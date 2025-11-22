@@ -170,6 +170,36 @@ button:hover {
   border-radius: 4px;
 }
 
+.create-post-link {
+  background-color: #27ae60;
+  color: #ffffff !important;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none !important;
+  margin-right: 1rem;
+  display: inline-block;
+}
+
+.create-post-link:hover {
+  background-color: #229954;
+  text-decoration: none !important;
+}
+
+textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
 /* Comment section */
 
 .comments-section {

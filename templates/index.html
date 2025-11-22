@@ -63,17 +63,19 @@ content %}
 
       const postId = form.getAttribute("data-post-id");
       const textarea = form.querySelector(".comment-input");
-      const commentMessage = form.querySelector(".comment-message");
-      const content = textarea.value.trim();
+      const messageDiv = form.querySelector(".comment-message");
       const button = form.querySelector(".comment-btn");
+      const content = textarea.value.trim();
+
+      console.log("Posting comment to post ID:", postId);
+      console.log("Comment content:", content);
 
       if (!content) {
-        commentMessage.innerHTML =
-          '<p class="error">Please leave a comment...</p>';
+        messageDiv.innerHTML = '<p class="error">Please leave a comment...</p>';
         return;
       }
 
-      //Disable button to prevent multiple submissions
+      //Disable button during submission
       button.disabled = true;
       button.textContent = "Posting comment...";
 
@@ -86,7 +88,11 @@ content %}
           body: JSON.stringify({ content: content }),
         });
 
+        console.log("Response status:", response.status);
+        console.log("Response OK:", response.ok);
+
         const data = await response.json();
+        console.log("Response data:", data);
 
         if (response.ok) {
           messageDiv.innerHTML = '<p class="success">Comment posted!</p>';
@@ -96,13 +102,14 @@ content %}
             window.location.reload();
           }, 1000);
         } else {
-          commentMessage.innerHTML = '<p class="error">' + data.error + "</p>";
+          console.error("Error posting comment:", data);
+          messageDiv.innerHTML = '<p class="error">' + data.error + "</p>";
           button.disabled = false;
           button.textContent = "Post Comment";
         }
       } catch (error) {
-        commentMessage.innerHTML =
-          '<p class="error">An error occurred. Please try again.</p>';
+        messageDiv.innerHTML =
+          '<p class="error">Failed to post comment. Please try again.</p>';
         button.disabled = false;
         button.textContent = "Post Comment";
       }

@@ -1,19 +1,23 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from db.connection import get_db_connection
 
 posts_bp = Blueprint('posts', __name__)
 
 @posts_bp.route('/posts', methods=['POST'])
 def create_post():
+    # Check if user is authenticated
+    if 'user_id' not in session:
+        return jsonify({'error': 'You must be logged in to create a psot'}), 401
+    
     data = request.get_json()
     
     # Validate input
-    if not data or not data.get('user_id') or not data.get('title'):
-        return jsonify({'error': 'user_id and title are required'}), 400
+    if not data or not data.get('title'):
+        return jsonify({'error': 'Title is required'}), 400
     
-    user_id = data['user_id']
+    user_id = session['user_id'] # Get user_id from session
     title = data['title']
-    content = data.get('content', '')
+    content = data.get('content', '') # Content is optional
     
     try:
         conn = get_db_connection()

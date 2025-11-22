@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, session, redirect
 from db.connection import get_db_connection
 from routes.users import users_bp
 from routes.posts import posts_bp
@@ -70,6 +70,13 @@ def register_page():
 @app.route('/login')
 def login_page():
     return render_template('login.html')
+
+@app.route('/create-post')
+def create_post_page():
+    # Check if user is logged in 
+    if 'user_id' not in session:
+        return redirect('/login')
+    return render_template('create_post.html')
 
 @app.route('/test-db')
 def test_db():
