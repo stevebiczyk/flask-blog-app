@@ -11,13 +11,6 @@ def create_comment(post_id):
     
     data = request.get_json()
     
-    #Validate input
-    # if not data or not data.get('user_id') or not data.get('content'):
-    #     return jsonify({'error': 'user_id and content are required'}), 400
-        
-    # user_id = data.get('user_id')
-    # content = data.get('content')
-    
     # Validate input
     if not data or not data.get('content'):
         return jsonify({'error': 'Content is required'}), 400
@@ -32,7 +25,7 @@ def create_comment(post_id):
         # Check if post exists
         cur.execute('SELECT id FROM posts WHERE id = %s', (post_id,))
         if not cur.fetchone():
-            cur
+            cur.close()
             conn.close()
             return jsonify({'error': 'Post not found'}), 404
         
