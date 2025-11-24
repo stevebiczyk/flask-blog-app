@@ -1,0 +1,81 @@
+{% extends 'base.html' %} {% block title %}Edit Post - My Blog{% endblock %} {%
+block content %}
+<div class="form-container">
+  <h2>Edit Post</h2>
+  <form id="editPostForm" data-post-id="{{ post_id }}">
+    <div class="form-group">
+      <label for="title">Title:</label>
+      <input
+        type="text"
+        id="title"
+        name="title"
+        value="{{post.title}}"
+        required
+        maxlength="200"
+      />
+    </div>
+    <div class="form-group">
+      <label for="content">Content:</label>
+      <textarea id="content" name="content" rows="10" required>
+{{post.content}}</textarea
+      >
+    </div>
+    <button type="submit" class="submit-btn">Update Post</button>
+    <a href="/" class="cancel-btn">Cancel</a>
+  </form>
+  <div id="message"></div>
+</div>
+
+<script>
+  const form = document.getElementById("editPostForm");
+  const postId = form.dataset.postId;
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const title = document.getElementById("title").value.trim();
+    const content = document.getElementById("content").value.trim();
+    const messageDiv = document.getElementById("message");
+    const button = this.querySelector('button[type="submit"]');
+
+    if (!title || !content) {
+      messageDiv.innerHTML =
+        '<p class="error">Both title and content are required.</p>';
+      return;
+    }
+
+    // Disable button during submission
+    button.disabled = true;
+    button.textContent = "Updating...";
+
+    try {
+      const response = await fetch("/api/posts/" + postId, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title: title, content: content }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        messageDiv.innerHTML =
+          '<p class="success">Post updated successfully! Redirecting...</p>';
+        setTimeout(function () {
+          window.location.href = "/";
+        }, 1000);
+      } else {
+        messageDiv.innerHTML = '<p class="error">' + data.error + "</p>";
+        button.disabled = false;
+        button.textContent = "Update Post";
+      }
+    } catch (error) {
+      messageDiv.innerHTML =
+        '<p class="error">An error occurred. Please try again.</p>';
+      button.disabled = false;
+      button.textContent = "Update Post";
+    }
+  });
+</script>
+{% endblock %}

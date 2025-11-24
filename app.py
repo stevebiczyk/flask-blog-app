@@ -31,7 +31,8 @@ def home():
                 posts.title,
                 posts.content,
                 posts.created_at,
-                users.username
+                users.username,
+                users.id as user_id
             FROM posts
             JOIN users ON posts.user_id = users.id
             ORDER BY posts.created_at DESC
@@ -77,6 +78,40 @@ def create_post_page():
     if 'user_id' not in session:
         return redirect('/login')
     return render_template('create_post.html')
+
+@app.route('/edit-post/<int:post_id>')
+def edit_post_page(post_id):
+    # Check if user is logged in 
+    if 'user_id' not in session:
+        return redirect('/login')
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Get post and verify ownership
+        cur.execute('''
+            SELECT id, user_id, title, content 
+            FROM posts 
+            WHERE id = %s
+        ''', (post_id,))
+        
+        post = cur.fetchone()
+        cur.close()
+        conn.close()
+        
+        if not post:
+            return "Post not found", 404
+        
+        if post['user_id'] != session['user_id']:
+            return "Unauthorized: You can only edit your own posts", 403
+        
+        return render_template('edit_post.html', post=post)
+    
+    except Exception as e:
+        return f"An error occurred while loading post: {str(e)}", 500
+    
+    
 
 @app.route('/test-db')
 def test_db():
