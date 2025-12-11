@@ -1,1 +1,63 @@
+{% extends 'base.html' %} {% block title %} Search Results - My Blog {% endblock
+title %} {% block content %}
+<div class="search-container">
+  <div class="search-header">
+    <h2>Search Posts</h2>
+    <form method="GET" action="/search" class="search-form">
+      <input
+        type="text"
+        name="q"
+        placeholder="Search for posts by title or content..."
+        value="{{ query|default('') }}"
+        class="search-input"
+        autofocus
+      />
+      <button type="submit" class="search-btn">Search</button>
+    </form>
+  </div>
 
+  {% if query %}
+  <div class="search-results-info">
+    {% if posts %}
+    <p>
+      Found <strong>{{ posts|length }}</strong> result{{ 's' if posts|length !=
+      1 else '' }} for "<strong>{{ query }}</strong>"
+    </p>
+    {% else %}
+    <p>No results found for "<strong>{{ query }}</strong>"</p>
+    <p class="search-tip">Try different keywords or check your spelling.</p>
+    {% endif %}
+  </div>
+
+  {% if posts %}
+  <div class="search-results">
+    {% for post in posts %}
+    <article class="search-result">
+      <h3><a href="/">{{ post.title }}</a></h3>
+      <div class="post-meta">
+        <span class="author"
+          >By
+          <a href="/user/{{ post.username }}" class="username-link"
+            >{{ post.username }}</a
+          ></span
+        >
+        <span class="date">{{ post.created_at.strftime('%B %d, %Y') }}</span>
+        <span class="comments"
+          >{{ post.comment_count }} comment{{ 's' if post.comment_count != 1
+          else '' }}</span
+        >
+      </div>
+      <p class="search-excerpt">
+        {{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}
+      </p>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %} {% else %}
+  <div class="search-empty">
+    <p>Enter a search term to find posts.</p>
+  </div>
+  {% endif %} {% endif %}
+</div>
+
+{% endblock content %}
