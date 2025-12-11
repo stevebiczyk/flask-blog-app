@@ -19,7 +19,9 @@
           <li id="nav-login"><a href="/login">Login</a></li>
           <li id="nav-user" style="display: none">
             <a href="/create-post" class="create-post-link">Create Post</a>
-            <span id="nav-username"></span>
+            <a href="#" id="nav-profile-link" class="profile-link"
+              >My Profile</a
+            >
             <button onclick="logout()" class="logout-btn">Logout</button>
           </li>
         </ul>
@@ -36,8 +38,12 @@
             document.getElementById("nav-login").style.display = "none";
             document.getElementById("nav-register").style.display = "none";
             document.getElementById("nav-user").style.display = "inline";
-            document.getElementById("nav-username").textContent =
-              "Welcome," + data.user.username;
+            // document.getElementById("nav-username").textContent =
+            // "Welcome," + data.user.username;
+
+            // Set profile link
+            const profileLink = document.getElementById("nav-profile-link");
+            profileLink.href = "/user/" + data.user.username;
           }
         } catch (error) {
           console.error("Error checking login status:", error);

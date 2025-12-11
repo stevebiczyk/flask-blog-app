@@ -9,7 +9,12 @@ content %}
       <div>
         <h3>{{ post.title }}</h3>
         <div class="post-meta">
-          <span class="author">By {{ post.username }}</span>
+          <span class="author"
+            >By
+            <a href="/user/{{ post.username }}" class="username-link"
+              >{{ post.username }}</a
+            ></span
+          >
           <span class="date">{{ post.created_at.strftime('%B %d, %Y') }}</span>
         </div>
       </div>

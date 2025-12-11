@@ -1,0 +1,44 @@
+{% extends 'base.html' %} {% block title %}User Profile - My Blog{% endblock %}
+{% block content %}
+<div class="profile-container">
+  <div class="profile-header">
+    <div class="profile-avatar">{{ user.username[0]|upper }}</div>
+    <div class="profile-info">
+      <h2>{{ user.username }}</h2>
+      <p class="profile-meta">
+        Member since: {{ user.created_at.strftime('%B %d, %Y') }}
+      </p>
+      <p class="profile-stats">
+        <strong>{{ posts|length }}</strong> post{{ 's' if posts|length != 1 else
+        '' }}
+      </p>
+    </div>
+  </div>
+
+  <div class="profile-posts">
+    <h3>Posts by{{ user.username }}</h3>
+    {% if posts %}
+    <div class="posts-list">
+      {% for post in posts %}
+      <article class="profile-post">
+        <h4><a href="/">{{ post.title }}</a></h4>
+        <div class="post-meta">
+          <span class="date">{{ post.created_at.strftime('%B %d, %Y') }}</span>
+          <span class="comments"
+            >{{ post.comment_count }} comment{{ 's' if post.comment_count != 1
+            else '' }}</span
+          >
+        </div>
+        <p class="post-excerpt">
+          {{ post.content[:150] }}{% if post.content|length > 150 %}...{% endif
+          %}
+        </p>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-posts">{{user.username}} hasn't posted anything yet</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

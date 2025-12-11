@@ -111,7 +111,55 @@ def edit_post_page(post_id):
     except Exception as e:
         return f"An error occurred while loading post: {str(e)}", 500
     
+# User ptofile route    
+@app.route('/user/<username>')
+def user_profile(username):
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Get user information
+        cur.execute('''
+            SELECT id, username, created_at 
+            FROM users 
+            WHERE username = %s
+        ''', (username,))
+        
+        user = cur.fetchone()
+        
+        if not user:
+            cur.close()
+            conn.close()
+            return "User not found", 404
+        
+        # Get all posts by this user with comment counts
+        cur.execute('''
+            SELECT 
+                posts.id,
+                posts.title,
+                posts.content,
+                posts.created_at,
+                posts.updated_at,
+                COUNT(comments.id) as comment_count
+            FROM posts
+            LEFT JOIN comments ON posts.id = comments.post_id
+            WHERE posts.user_id = %s
+            GROUP BY posts.id, posts.title, posts.content, posts.created_at, posts.updated_at
+            ORDER BY posts.created_at DESC
+        ''', (user['id'],))
+        
+        posts = cur.fetchall()
+        
+        cur.close()
+        conn.close()
+        
+        return render_template('user_profile.html', user=user, posts=posts)
     
+    except Exception as e:
+        print(f"Error in user_profile: {e}")  # Debug print
+        import traceback
+        traceback.print_exc()  # Show full error
+        return f"An error occurred while loading user profile: {str(e)}", 500
 
 @app.route('/test-db')
 def test_db():
