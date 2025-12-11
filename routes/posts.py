@@ -66,6 +66,42 @@ def get_post(post_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+@posts_bp.route('/posts/search', methods=['GET'])
+def search_posts():
+    query = request.args.get('q', '').strip()
+    if not query:
+        return jsonify({'posts': [], 'count': 0, query: ''})
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Search posts by title or content
+        search_query = f"%{query}%"
+        cur.execute('''
+            SELECT 
+                posts.id,
+                posts.title,
+                posts.content,
+                posts.created_at,
+                posts.updated_at,
+                users.username,
+                users.id as user_id
+            FROM posts
+            JOIN users ON posts.user_id = users.id
+            WHERE posts.title ILIKE %s OR posts.content ILIKE %s
+            ORDER BY posts.created_at DESC
+        ''', (search_query, search_query))
+        
+        posts = cur.fetchall()
+        cur.close()
+        conn.close()
+        
+        return jsonify({'posts': posts, 'count': len(posts), 'query': query})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 @posts_bp.route('/posts', methods=['POST'])
 def create_post():
     # Check if user is authenticated

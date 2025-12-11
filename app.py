@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, session, redirect
+from flask import Flask, jsonify, render_template, session, redirect, request
 from db.connection import get_db_connection
 from routes.users import users_bp
 from routes.posts import posts_bp
@@ -160,6 +160,44 @@ def user_profile(username):
         import traceback
         traceback.print_exc()  # Show full error
         return f"An error occurred while loading user profile: {str(e)}", 500
+    
+@app.route('/search')
+def search_page():
+    query = request.args.get('q', '').strip()
+    if not query:
+        return render_template('search.html', posts=[], query='')
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Search posts by title or content
+        search_query = f"%{query}%"
+        cur.execute('''
+            SELECT 
+                posts.id,
+                posts.title,
+                posts.content,
+                posts.created_at,
+                users.username,
+                users.id as user_id
+                COUNT(comments.id) as comment_count
+            FROM posts
+            JOIN users ON posts.user_id = users.id
+            WHERE posts.title ILIKE %s OR posts.content ILIKE %s
+            GROUP BY posts.id, posts.title, posts.content, posts.created_at, users.username, users.id
+            ORDER BY posts.created_at DESC
+        ''', (search_query, search_query))
+        
+        posts = cur.fetchall()
+        
+        cur.close()
+        conn.close()
+        
+        return render_template('search.html', posts=posts, query=query)
+    
+    except Exception as e:
+        return render_template('search.html', posts=[], query=query, error=str(e))
 
 @app.route('/test-db')
 def test_db():
