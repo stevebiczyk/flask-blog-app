@@ -624,6 +624,45 @@ textarea:focus {
   margin: 0;
 }
 
+/* Quick Search on Homepage */
+
+.quick-search {
+  margin-top: 2rem;
+}
+
+.quick-search form {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 500px;
+}
+
+.quick-search input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.quick-search input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.quick-search button {
+  padding: 0.75rem 1.5rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.quick-search button:hover {
+  background-color: #2980b9;
+}
+
 /* Footer */
 
 footer {
