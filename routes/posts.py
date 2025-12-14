@@ -33,6 +33,7 @@ def get_posts():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+    
 @posts_bp.route('/posts/<int:post_id>', methods=['GET'])
 def get_post(post_id):
     try:
@@ -102,6 +103,7 @@ def search_posts():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+    
 @posts_bp.route('/posts', methods=['POST'])
 def create_post():
     # Check if user is authenticated
@@ -117,6 +119,7 @@ def create_post():
     user_id = session['user_id'] # Get user_id from session
     title = data['title']
     content = data.get('content', '') # Content is optional
+    tags = data.get('tags', []) # Get tags from request
     
     try:
         conn = get_db_connection()
@@ -129,6 +132,29 @@ def create_post():
         )
         
         post = cur.fetchone()
+        post_id = post['id']
+        
+        # Handle tags
+        if tags:
+            for tag_name in tags:
+                tag_name = tag_name.strip().lower()
+                if not tag_name:
+                    continue
+                
+                # Check if tag exists, if not, create it
+                cur.execute('SELECT id FROM tags WHERE name = %s', (tag_name,))
+                tag = cur.fetchone()
+                
+                if tag:
+                    tag_id = tag['id']
+                else:
+                    # Insert new tag
+                    cur.execute('INSERT INTO tags (name) VALUES (%s) RETURNING id', (tag_name,))
+                    tag_id = cur.fetchone()['id']
+                
+                # Associate tag with post
+                cur.execute('INSERT INTO post_tags (post_id, tag_id) VALUES (%s, %s) ON CONFLICT DO NOTHING', (post_id, tag_id))
+                
         conn.commit()
         cur.close()
         conn.close()
@@ -141,12 +167,14 @@ def create_post():
                 'title': post['title'],
                 'content': post['content'],
                 'created_at': str(post['created_at']),
-                'updated_at': str(post['updated_at'])
+                'updated_at': str(post['updated_at']),
+                'tags': tags
             }
         }), 201
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
     
 @posts_bp.route('/posts/<int:post_id>', methods=['PUT'])
 def update_post(post_id):
@@ -162,6 +190,7 @@ def update_post(post_id):
     
     title = data['title']
     content = data.get('content', '') # Content is optional
+    tags = data.get('tags', []) # Get tags from request
     
     try:
         conn = get_db_connection()
@@ -190,6 +219,29 @@ def update_post(post_id):
         )
         
         updated_post = cur.fetchone()
+        
+        # Update tags - clear existing and add new
+        cur.execute('DELETE FROM post_tags WHERE post_id = %s', (post_id,))
+        if tags:
+            for tag_name in tags:
+                tag_name = tag_name.strip().lower()
+                if not tag_name:
+                    continue
+                
+                # Check if tag exists, if not, create it
+                cur.execute('SELECT id FROM tags WHERE name = %s', (tag_name,))
+                tag = cur.fetchone()
+                
+                if tag:
+                    tag_id = tag['id']
+                else:
+                    # Insert new tag
+                    cur.execute('INSERT INTO tags (name) VALUES (%s) RETURNING id', (tag_name,))
+                    tag_id = cur.fetchone()['id']
+                
+                # Link post with tag
+                cur.execute('INSERT INTO post_tags (post_id, tag_id) VALUES (%s, %s) ON CONFLICT DO NOTHING', (post_id, tag_id))
+                
         conn.commit()
         cur.close()
         conn.close()
@@ -201,7 +253,8 @@ def update_post(post_id):
                 'user_id': updated_post['user_id'],
                 'title': updated_post['title'],
                 'content': updated_post['content'],
-                'updated_at': str(updated_post['updated_at'])
+                'updated_at': str(updated_post['updated_at']),
+                'tags': tags
             }
         }), 200
         
