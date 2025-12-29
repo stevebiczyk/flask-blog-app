@@ -118,6 +118,14 @@ main {
   font-size: 1rem;
 }
 
+.form-help {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: #7f8c8d;
+}
+
 button {
   background: #27ae60;
   color: #ffffff;

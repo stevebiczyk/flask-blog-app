@@ -11,6 +11,20 @@
       <label for="content">Content:</label>
       <textarea id="content" name="content" rows="10" required></textarea>
     </div>
+    <div class="form-group">
+      <label for="tags">Tags (comma-separated):</label>
+      <input
+        type="text"
+        id="tags"
+        name="tags"
+        placeholder="e.g. python, tutorial, beginner"
+        maxlength="200"
+      />
+      <small class="form-help"
+        >Enter tags separated by commas. Tags will be converted to
+        lowercase.</small
+      >
+    </div>
     <button type="submit" class="submit-btn">Create Post</button>
   </form>
   <div id="message"></div>
@@ -24,9 +38,10 @@
 
       const title = document.getElementById("title").value.trim();
       const content = document.getElementById("content").value.trim();
+      const tagsInput = document.getElementById("tags").value.trim();
       const messageDiv = document.getElementById("message");
       const button = e.target.querySelector(".submit-btn");
-      // .querySelector('button[type="submit"]');
+      //const button = this .querySelector('button[type="submit"]');
 
       if (!title || !content) {
         messageDiv.innerHTML =
@@ -34,6 +49,14 @@
         messageDiv.style.color = "red";
         return;
       }
+
+      // Parse tags from comma-separated string
+      const tags = tagsInput
+        ? tagsInput
+            .split(",")
+            .map((t) => t.trim())
+            .filter((t) => t)
+        : [];
 
       // Disable button during submission
       button.disabled = true;
@@ -45,7 +68,7 @@
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ title: title, content: content }),
+          body: JSON.stringify({ title: title, content: content, tags: tags }),
         });
 
         const data = await response.json();

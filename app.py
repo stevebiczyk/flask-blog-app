@@ -3,6 +3,7 @@ from db.connection import get_db_connection
 from routes.users import users_bp
 from routes.posts import posts_bp
 from routes.comments import comments_bp
+from routes.tags import tags_bp
 import os
 from dotenv import load_dotenv
 
@@ -17,6 +18,7 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.register_blueprint(users_bp, url_prefix='/api')
 app.register_blueprint(posts_bp, url_prefix='/api')
 app.register_blueprint(comments_bp, url_prefix='/api')
+app.register_blueprint(tags_bp, url_prefix='/api')
 
 @app.route('/')
 def home():
