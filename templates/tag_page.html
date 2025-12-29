@@ -1,0 +1,60 @@
+{% extends 'base.html' %} {% block title %} {{ tag.name }} - Posts Tagged with
+"{{ tag.name }}" {% endblock title %} {% block content %}
+<div class="tag-page-container">
+  <div class="tag-header">
+    <div class="tag-badge">
+      <span class="tag-icon">#</span>
+    </div>
+    <div class="tag-info">
+      <h2>{{ tag.name }}</h2>
+      <p class="tag-stats">
+        <strong>{{ posts|length }}</strong>post{{ 's' if posts|length != 1 else
+        '' }}
+      </p>
+    </div>
+  </div>
+  <div class="tag-posts">
+    {% if posts %}
+    <div class="posts-list">
+      {% for post in posts %}
+      <article class="tag-post">
+        <h3><a href="/">{{ post.title }}</a></h3>
+        <div class="post-meta">
+          <span class="author"
+            >By
+            <a href="/user/{{ post.username }}" class="username-link"
+              >{{ post.username }}</a
+            ></span
+          >
+          <span class="date">{{ post.created_at.strftime('%B %d, %Y') }}</span>
+          <span class="comments"
+            >{{ post.comment_count }} comment{{ 's' if post.comment_count != 1
+            else '' }}</span
+          >
+        </div>
+
+        {% if post.tags %}
+        <div class="post-tags-inline">
+          {% for ptag in post.tags %}
+          <a href="/tags/{{ ptag.id }}" class="tag-small">{{ ptag.name }}</a>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <p class="post-excerpt">
+          {{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif
+          %}
+        </p>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-posts">No posts with this tag yet.</p>
+    {% endif %}
+  </div>
+
+  <div class="back-link">
+    <a href="/">&larr; Back to all posts</a>
+  </div>
+</div>
+{% endblock %}
