@@ -76,6 +76,35 @@ def home():
         
     except Exception as e:
         return render_template('index.html', posts=[], error=str(e))
+    
+@app.route('/tags')
+def all_tags_page():
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Get all tags with post counts
+        cur.execute('''
+            SELECT 
+                tags.id,
+                tags.name,
+                COUNT(post_tags.post_id) as post_count
+            FROM tags
+            LEFT JOIN post_tags ON tags.id = post_tags.tag_id
+            GROUP BY tags.id, tags.name
+            HAVING COUNT(post_tags.post_id) > 0
+            ORDER BY post_count DESC, tags.name ASC
+        ''')
+        
+        tags = cur.fetchall()
+        
+        cur.close()
+        conn.close()
+        
+        return render_template('tags.html', tags=tags)
+    
+    except Exception as e:
+        return render_template('tags.html', tags=[], error=str(e))
 
 @app.route('/register')
 def register_page():

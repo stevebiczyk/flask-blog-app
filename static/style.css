@@ -530,6 +530,93 @@ textarea:focus {
   color: #2980b9;
 }
 
+/* All Tags Page */
+.all-tags-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.all-tags-container h2 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.tags-intro {
+  color: #7f8c8d;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+}
+
+.tag-cloud-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 500;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Tag size based on post count */
+.tag-cloud-item[data-count="1"],
+.tag-cloud-item[data-count="2"] {
+  font-size: 0.9rem;
+}
+
+.tag-cloud-item[data-count="3"],
+.tag-cloud-item[data-count="4"],
+.tag-cloud-item[data-count="5"] {
+  font-size: 1rem;
+}
+
+.tag-cloud-item[data-count="6"],
+.tag-cloud-item[data-count="7"],
+.tag-cloud-item[data-count="8"],
+.tag-cloud-item[data-count="9"] {
+  font-size: 1.1rem;
+}
+
+.tag-cloud-item:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.tag-name {
+  text-transform: lowercase;
+}
+
+.tag-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.no-tags {
+  text-align: center;
+  color: #7f8c8d;
+  font-style: italic;
+  padding: 3rem;
+}
+
 /* Profile Page */
 .profile-container {
   max-width: 800px;

@@ -1,0 +1,25 @@
+{% extends "base.html" %} {% block title %} Browse tags - My Blog {% endblock
+title %} {% block content %}
+
+<div class="all-tags-container">
+  <h2>Browse by Tag</h2>
+  <p class="tag-intro">
+    Explore posts categorized by tags. Click on a tag to see all related posts.
+  </p>
+  {% if tags %}
+  <div class="tags-cloud">
+    {% for tag in tags %}
+    <a
+      href="{% url 'tag_posts' tag.id %}"
+      class="tag-cloud-item"
+      data-count="{{ tag.post_count }}"
+    >
+      <span class="tag-name">{{ tag.name }}</span>
+      <span class="tag-count">{{ tag.post_count }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="no-tags">No tags available.</p>
+  {% endif %} {% endblock content %}
+</div>
