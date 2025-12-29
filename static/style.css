@@ -382,6 +382,34 @@ textarea:focus {
   margin-top: 1rem;
 }
 
+/* Tags */
+
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+}
+
 /* Profile Page */
 .profile-container {
   max-width: 800px;
@@ -427,7 +455,7 @@ textarea:focus {
   font-size: 1.1rem;
 }
 
-.profie-posts h3 {
+.profile-posts h3 {
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
   color: #2c3e50;
@@ -439,7 +467,7 @@ textarea:focus {
   gap: 1.5rem;
 }
 
-.profie-post {
+.profile-post {
   background-color: #f8f9fa;
   padding: 1.5rem;
   border-radius: 8px;
@@ -447,7 +475,7 @@ textarea:focus {
   transition: transform 0.2s box-shadow 0.2s;
 }
 
-.profie-post:hover {
+.profile-post:hover {
   transform: translateX(5px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -466,7 +494,7 @@ textarea:focus {
   color: #3498db;
 }
 
-.profie-post .post-meta {
+.profile-post .post-meta {
   display: flex;
   gap: 1rem;
   color: #7f8c8d;
@@ -474,7 +502,7 @@ textarea:focus {
   margin-bottom: 1rem;
 }
 
-.profie-post .post-meta .comments {
+.profile-post .post-meta .comments {
   padding-left: 1rem;
   border-left: 1px solid #ddd;
 }

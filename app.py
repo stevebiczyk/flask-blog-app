@@ -42,8 +42,9 @@ def home():
         
         posts = cur.fetchall()
         
-        # get comments for each post
+        # get comments and tags for each post
         for post in posts:
+            # Get comments for the post
             cur.execute('''
                 SELECT 
                     comments.id,
@@ -57,7 +58,17 @@ def home():
             ''', (post['id'],))
             post['comments'] = cur.fetchall()
         
-        
+        # Get tags for each post
+            cur.execute('''
+                SELECT tags.id,
+                       tags.name
+                FROM tags
+                JOIN post_tags ON tags.id = post_tags.tag_id
+                WHERE post_tags.post_id = %s
+                ORDER BY tags.name ASC
+            ''', (post['id'],))
+            post['tags'] = cur.fetchall()
+
         cur.close()
         conn.close()
         
