@@ -1,5 +1,12 @@
 {% extends "base.html" %} {% block title %}Create Post - My Blog{% endblock %}
 {% block content %}
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+
 <div class="form-container">
   <h2>Create a New Post</h2>
   <form id="createPostForm">
@@ -31,13 +38,38 @@
 </div>
 
 <script>
+  // Initialize SimpleMDE Markdown Editor
+  var simplemde = new SimpleMDE({
+    element: document.getElementById("content"),
+    spellChecker: false,
+    placeholder: "Write your post content here... (Markdown supported)",
+    toolbar: [
+      "bold",
+      "italic",
+      "heading",
+      "|",
+      "quote",
+      "unordered-list",
+      "ordered-list",
+      "|",
+      "link",
+      "image",
+      "|",
+      "preview",
+      "side-by-side",
+      "fullscreen",
+      "|",
+      "guide",
+    ],
+  });
   document
     .getElementById("createPostForm")
     .addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const title = document.getElementById("title").value.trim();
-      const content = document.getElementById("content").value.trim();
+      const content = simplemde.value();
+      // const content = document.getElementById("content").value.trim();
       const tagsInput = document.getElementById("tags").value.trim();
       const messageDiv = document.getElementById("message");
       const button = e.target.querySelector(".submit-btn");
