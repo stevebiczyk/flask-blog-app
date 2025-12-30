@@ -6,6 +6,7 @@ from routes.comments import comments_bp
 from routes.tags import tags_bp
 import os
 from dotenv import load_dotenv
+import markdown as md
 
 load_dotenv()
 
@@ -19,6 +20,11 @@ app.register_blueprint(users_bp, url_prefix='/api')
 app.register_blueprint(posts_bp, url_prefix='/api')
 app.register_blueprint(comments_bp, url_prefix='/api')
 app.register_blueprint(tags_bp, url_prefix='/api')
+
+@app.template_filter('markdown')
+def markdown_filter(text):
+    """Convert markdown text to HTML"""
+    return md.markdown(text, extensions=['fenced_code', 'codehilite'])
 
 @app.route('/')
 def home():

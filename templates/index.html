@@ -45,7 +45,9 @@ content %}
         </div>
       </div>
 
-      <p class="post-content">{{ post.content }}</p>
+      <div class="post-content markdown-content">
+        {{ post.content|markdown | safe }}
+      </div>
 
       <!-- Tags Section -->
       {% if post.tags %}
