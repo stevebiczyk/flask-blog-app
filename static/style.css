@@ -1,10 +1,6 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  transition: background-color 0.3s ease, color 0.3s ease,
-    border-color 0.3s ease;
-}
+/* ============================================================================
+   CSS VARIABLES - Light and Dark Themes
+============================================================================ */
 
 :root {
   /* Light mode (default) */
@@ -60,12 +56,27 @@
   --shadow-medium: rgba(0, 0, 0, 0.5);
 }
 
+/* ============================================================================
+   UNIVERSAL RESET
+============================================================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* ============================================================================
+   BASE STYLES
+============================================================================ */
+
 body {
   font-family: Arial, sans-serif;
   color: var(--text-primary);
   background-color: var(--bg-tertiary);
   line-height: 1.6;
-  padding: 20px;
 }
 
 main {
@@ -81,35 +92,55 @@ main {
   max-width: 800px;
   margin: 0 auto;
   padding: 0 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px var(--shadow-medium);
 }
 
+/* ============================================================================
+   NAVIGATION
+============================================================================ */
+
 nav {
-  background: #2c3e50;
-  color: var(--bg-primary);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
   padding: 1rem 0;
   margin-bottom: 2rem;
 }
 
-nav h1 {
-  display: inline-block;
-  margin-right: 2rem;
+nav .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
+nav h1 {
+  margin: 0;
+}
+
 nav h1 a {
-  color: var(--bg-primary);
+  color: white;
   text-decoration: none;
 }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 nav ul {
   list-style: none;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li {
   display: inline-block;
 }
-nav ul li {
-  display: inline;
-  margin-right: 1rem;
-}
+
 nav ul li a {
-  color: var(--bg-primary);
+  color: white;
   text-decoration: none;
   font-weight: bold;
 }
@@ -118,10 +149,45 @@ nav ul li a:hover {
   text-decoration: underline;
 }
 
+/* Theme Toggle Button */
+.theme-toggle {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: rotate(20deg);
+}
+
+.theme-icon {
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle:active .theme-icon {
+  transform: scale(0.9);
+}
+
+/* ============================================================================
+   POSTS
+============================================================================ */
+
 .posts h2 {
   margin-bottom: 1.5rem;
-  color: #2c3e50;
+  color: var(--text-primary);
 }
+
 .post {
   border-bottom: 1px solid var(--border-light);
   padding: 1.5rem 0;
@@ -130,15 +196,18 @@ nav ul li a:hover {
 .post:last-child {
   border-bottom: none;
 }
+
 .post h3 {
   margin-bottom: 0.5rem;
   color: var(--text-primary);
 }
 
-.post meta {
+.post-meta {
   font-size: 0.9rem;
   color: var(--text-tertiary);
   margin-bottom: 1rem;
+  display: flex;
+  gap: 1rem;
 }
 
 .post-meta .author {
@@ -147,130 +216,6 @@ nav ul li a:hover {
 
 .post-content {
   color: var(--text-secondary);
-}
-
-.form-container {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.form-help {
-  display: block;
-  margin-top: 0.5rem;
-  font-size: 0.85rem;
-  font-style: italic;
-  color: var(--text-tertiary);
-}
-
-button {
-  background: var(--success);
-  color: var(--bg-primary);
-  padding: 0.75rem 2rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-button:hover {
-  background-color: var(--accent-primary-hover);
-}
-
-#message {
-  margin-top: 1rem;
-}
-
-.success {
-  color: #27ae60;
-  background-color: #d4edda;
-  padding: 1rem;
-  border-radius: 4px;
-}
-
-.logout-btn {
-  background-color: #e74c3c;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  margin-left: 1rem;
-}
-
-.logout-btn:hover {
-  background-color: #c0392b;
-}
-
-#nav-username {
-  color: white;
-  margin-right: 0.5rem;
-}
-
-.profile-link {
-  color: white;
-  text-decoration: none;
-  margin-right: 1rem;
-}
-
-.profile-link:hover {
-  text-decoration: underline;
-}
-
-.error {
-  color: #c0392b;
-  background-color: #f8d7da;
-  padding: 1rem;
-  border-radius: 4px;
-}
-
-.create-post-link {
-  background-color: var(--success);
-  color: var(--bg-primary) !important;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  text-decoration: none !important;
-  margin-right: 1rem;
-  display: inline-block;
-}
-
-.create-post-link:hover {
-  background-color: #229954;
-  text-decoration: none !important;
-}
-
-textarea {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-dark);
-  border-radius: 4px;
-  font-size: 1rem;
-  font-family: inherit;
-  resize: vertical;
-}
-
-textarea:focus {
-  outline: none;
-  border-color: #3498db;
 }
 
 /* Post Header with actions */
@@ -304,23 +249,93 @@ textarea:focus {
 }
 
 .edit-btn {
-  background-color: #3498db;
+  background-color: var(--accent-primary);
   color: white;
 }
+
 .edit-btn:hover {
-  background-color: #2980b9;
+  background-color: var(--accent-primary-hover);
 }
 
 .delete-btn {
-  background-color: #e74c3c;
+  background-color: var(--error);
   color: white;
 }
 
 .delete-btn:hover {
-  background-color: #c0392b;
+  background-color: var(--error-hover);
 }
 
-/* Cancel Button for edit form */
+/* ============================================================================
+   FORMS
+============================================================================ */
+
+.form-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-dark);
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.form-help {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--text-tertiary);
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* ============================================================================
+   BUTTONS
+============================================================================ */
+
+button {
+  background: var(--success);
+  color: white;
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+button:hover {
+  background-color: var(--success-hover);
+}
+
+/* Cancel Button */
 .cancel-btn {
   display: inline-block;
   padding: 0.75rem 2rem;
@@ -335,22 +350,94 @@ textarea:focus {
   background-color: var(--text-tertiary);
 }
 
-/* Comment section */
+/* Create Post Link */
+.create-post-link {
+  background-color: var(--success);
+  color: white !important;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none !important;
+  margin-right: 1rem;
+  display: inline-block;
+}
+
+.create-post-link:hover {
+  background-color: var(--success-hover);
+  text-decoration: none !important;
+}
+
+/* Profile Link */
+.profile-link {
+  color: white;
+  text-decoration: none;
+  margin-right: 1rem;
+}
+
+.profile-link:hover {
+  text-decoration: underline;
+}
+
+/* Logout Button */
+.logout-btn {
+  background-color: var(--error);
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: 1rem;
+}
+
+.logout-btn:hover {
+  background-color: var(--error-hover);
+}
+
+#nav-username {
+  color: white;
+  margin-right: 0.5rem;
+}
+
+/* ============================================================================
+   MESSAGES
+============================================================================ */
+
+#message {
+  margin-top: 1rem;
+}
+
+.success {
+  color: var(--success);
+  background-color: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.error {
+  color: var(--error);
+  background-color: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+/* ============================================================================
+   COMMENTS SECTION
+============================================================================ */
 
 .comments-section {
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 1px solid var(--border-light);
+  border-top: 2px solid var(--border-light);
 }
 
 .comments-section h4 {
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 1rem;
   font-size: 1.2rem;
 }
 
 .comments-section h5 {
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 0.75rem;
   font-size: 1rem;
 }
@@ -364,19 +451,24 @@ textarea:focus {
   padding: 1rem;
   border-radius: 4px;
   margin-bottom: 1rem;
-  border-left: 3px solid #3498db;
+  border-left: 3px solid var(--accent-primary);
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
 }
 
 .comment-meta {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
+  gap: 1rem;
   font-size: 0.9rem;
 }
 
 .comment-meta strong {
-  color: #2c3e50;
+  color: var(--text-primary);
 }
 
 .comment-date {
@@ -396,6 +488,103 @@ textarea:focus {
   margin-bottom: 1.5rem;
 }
 
+/* Comment Actions */
+.comment-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.comment-edit-btn,
+.comment-delete-btn {
+  padding: 0.25rem 0.6rem;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+
+.comment-edit-btn {
+  background-color: var(--accent-primary);
+  color: white;
+}
+
+.comment-edit-btn:hover {
+  background-color: var(--accent-primary-hover);
+}
+
+.comment-delete-btn {
+  background-color: var(--error);
+  color: white;
+}
+
+.comment-delete-btn:hover {
+  background-color: var(--error-hover);
+}
+
+/* Comment Edit Form */
+.comment-edit-form {
+  margin-top: 0.5rem;
+}
+
+.comment-edit-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--accent-primary);
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  margin-bottom: 0.5rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.comment-edit-input:focus {
+  outline: none;
+  border-color: var(--accent-primary-hover);
+}
+
+.comment-edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.comment-save-btn,
+.comment-cancel-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+
+.comment-save-btn {
+  background-color: var(--success);
+  color: white;
+}
+
+.comment-save-btn:hover {
+  background-color: var(--success-hover);
+}
+
+.comment-save-btn:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.comment-cancel-btn {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.comment-cancel-btn:hover {
+  background-color: var(--text-tertiary);
+}
+
 /* Comment Form */
 .comment-form {
   background-color: var(--bg-secondary);
@@ -413,15 +602,17 @@ textarea:focus {
   font-family: inherit;
   resize: vertical;
   margin-bottom: 1rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .comment-input:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: var(--accent-primary);
 }
 
 .comment-btn {
-  background-color: #3498db;
+  background-color: var(--accent-primary);
   color: white;
   padding: 0.6rem 1.5rem;
   border: none;
@@ -431,7 +622,7 @@ textarea:focus {
 }
 
 .comment-btn:hover {
-  background-color: #2980b9;
+  background-color: var(--accent-primary-hover);
 }
 
 .comment-btn:disabled {
@@ -443,7 +634,9 @@ textarea:focus {
   margin-top: 1rem;
 }
 
-/* Tags */
+/* ============================================================================
+   TAGS
+============================================================================ */
 
 .post-tags {
   display: flex;
@@ -471,8 +664,7 @@ textarea:focus {
   box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
 }
 
-/* Tag page */
-
+/* Tag Page */
 .tag-page-container {
   max-width: 900px;
   margin: 0 auto;
@@ -497,7 +689,6 @@ textarea:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
   border: 3px solid rgba(255, 255, 255, 0.4);
 }
 
@@ -533,7 +724,7 @@ textarea:focus {
 
 .tag-post:hover {
   transform: translateX(5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
 .tag-post h3 {
@@ -542,7 +733,7 @@ textarea:focus {
 }
 
 .tag-post h3 a {
-  color: #2c3e50;
+  color: var(--text-primary);
   text-decoration: none;
 }
 
@@ -561,18 +752,17 @@ textarea:focus {
   display: inline-block;
   padding: 0.3rem 0.6rem;
   background-color: #e8f4e8;
-  color: #2c3e50;
+  color: var(--text-primary);
   text-decoration: none;
   border-radius: 12px;
   font-size: 0.75rem;
-  border: 1px solid #3498db;
+  border: 1px solid var(--accent-primary);
   transition: all 0.2s;
 }
 
 .tag-small:hover {
-  background-color: #3498db;
+  background-color: var(--accent-primary);
   color: white;
-  transform: translateY(-2px);
 }
 
 .back-link {
@@ -581,14 +771,14 @@ textarea:focus {
 }
 
 .back-link a {
-  color: #3498db;
+  color: var(--accent-primary);
   text-decoration: none;
   font-size: 1.1rem;
   transition: color 0.2s;
 }
 
 .back-link a:hover {
-  color: #2980b9;
+  color: var(--accent-primary-hover);
 }
 
 /* All Tags Page */
@@ -598,7 +788,7 @@ textarea:focus {
 }
 
 .all-tags-container h2 {
-  color: #2c3e50;
+  color: var(--text-primary);
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
 }
@@ -622,7 +812,7 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.25rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   text-decoration: none;
@@ -631,7 +821,6 @@ textarea:focus {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-/* Tag size based on post count */
 .tag-cloud-item[data-count="1"],
 .tag-cloud-item[data-count="2"] {
   font-size: 0.9rem;
@@ -678,7 +867,9 @@ textarea:focus {
   padding: 3rem;
 }
 
-/* Markdown Content Styling */
+/* ============================================================================
+   MARKDOWN CONTENT
+============================================================================ */
 
 .markdown-content {
   line-height: 1.8;
@@ -690,7 +881,7 @@ textarea:focus {
 .markdown-content h3 {
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
-  color: #2c3e50;
+  color: var(--text-primary);
 }
 
 .markdown-content h1 {
@@ -727,7 +918,7 @@ textarea:focus {
   border-radius: 3px;
   font-family: "Courier New", monospace;
   font-size: 0.9rem;
-  color: #e74c3c;
+  color: var(--error);
 }
 
 .markdown-content pre {
@@ -746,15 +937,16 @@ textarea:focus {
 }
 
 .markdown-content blockquote {
-  border-left: 4px solid #3498db;
+  border-left: 4px solid var(--accent-primary);
   padding-left: 1rem;
   margin-left: 0;
   margin-bottom: 1rem;
   color: var(--text-tertiary);
   font-style: italic;
 }
+
 .markdown-content a {
-  color: #3498db;
+  color: var(--accent-primary);
   text-decoration: none;
 }
 
@@ -775,20 +967,34 @@ textarea:focus {
   margin: 2rem 0;
 }
 
-/* SimpleMDE Editor Adjustments */
+/* SimpleMDE Editor */
 .CodeMirror {
   height: 400px;
   border: 1px solid var(--border-dark);
   border-radius: 4px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .editor-toolbar {
   border: 1px solid var(--border-dark);
   border-bottom: none;
   border-radius: 4px 4px 0 0;
+  background-color: var(--bg-secondary);
 }
 
-/* Profile Page */
+[data-theme="dark"] .editor-toolbar button {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .editor-toolbar button:hover {
+  background-color: var(--bg-tertiary);
+}
+
+/* ============================================================================
+   PROFILE PAGE
+============================================================================ */
+
 .profile-container {
   max-width: 800px;
   margin: 0 auto;
@@ -799,7 +1005,7 @@ textarea:focus {
   align-items: center;
   gap: 2rem;
   padding: 2rem;
-  background: linear-gradient(135deg, #667eea);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 8px;
   margin-bottom: 2rem;
   color: white;
@@ -809,7 +1015,7 @@ textarea:focus {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background-color: rgb(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -836,7 +1042,7 @@ textarea:focus {
 .profile-posts h3 {
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
-  color: #2c3e50;
+  color: var(--text-primary);
 }
 
 .posts-list {
@@ -849,13 +1055,13 @@ textarea:focus {
   background-color: var(--bg-secondary);
   padding: 1.5rem;
   border-radius: 8px;
-  border-left: 4px solid #3498db;
-  transition: transform 0.2s box-shadow 0.2s;
+  border-left: 4px solid var(--accent-primary);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .profile-post:hover {
   transform: translateX(5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
 .profile-post h4 {
@@ -864,12 +1070,12 @@ textarea:focus {
 }
 
 .profile-post h4 a {
-  color: #2c3e50;
+  color: var(--text-primary);
   text-decoration: none;
 }
 
 .profile-post h4 a:hover {
-  color: #3498db;
+  color: var(--accent-primary);
 }
 
 .profile-post .post-meta {
@@ -899,7 +1105,7 @@ textarea:focus {
 }
 
 .username-link {
-  color: #3498db;
+  color: var(--accent-primary);
   text-decoration: none;
   font-weight: 500;
 }
@@ -908,7 +1114,10 @@ textarea:focus {
   text-decoration: underline;
 }
 
-/* Search Page */
+/* ============================================================================
+   SEARCH PAGE
+============================================================================ */
+
 .search-container {
   max-width: 900px;
   margin: 0 auto;
@@ -920,12 +1129,12 @@ textarea:focus {
 
 .search-header h2 {
   margin-bottom: 1.5rem;
-  color: #2c3e50;
+  color: var(--text-primary);
 }
 
 .search-form {
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 
 .search-input {
@@ -935,16 +1144,18 @@ textarea:focus {
   border-radius: 8px;
   font-size: 1.1rem;
   transition: border-color 0.3s;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: var(--accent-primary);
 }
 
 .search-btn {
   padding: 1rem 2rem;
-  background-color: #3498db;
+  background-color: var(--accent-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -954,7 +1165,7 @@ textarea:focus {
 }
 
 .search-btn:hover {
-  background-color: #2980b9;
+  background-color: var(--accent-primary-hover);
 }
 
 .search-results-info {
@@ -992,7 +1203,7 @@ textarea:focus {
 }
 
 .search-result {
-  background-color: #fff;
+  background-color: var(--bg-primary);
   padding: 1.5rem;
   border-radius: 8px;
   border: 1px solid var(--border-color);

@@ -18,27 +18,29 @@
     <nav>
       <div class="container">
         <h1><a href="/">My Blog</a></h1>
-        <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/tags">Tags</a></li>
-          <li><a href="/search">Search</a></li>
-          <li id="nav-register"><a href="/register">Register</a></li>
-          <li id="nav-login"><a href="/login">Login</a></li>
-          <li id="nav-user" style="display: none">
-            <a href="/create-post" class="create-post-link">Create Post</a>
-            <a href="#" id="nav-profile-link" class="profile-link"
-              >My Profile</a
-            >
-            <button onclick="logout()" class="logout-btn">Logout</button>
-          </li>
-        </ul>
-        <button
-          id="theme-toggle"
-          class="theme-toggle"
-          aria-label="Toggle dark mode"
-        >
-          <span class="theme-icon">🌙</span>
-        </button>
+        <div class="nav-right">
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/tags">Tags</a></li>
+            <li><a href="/search">Search</a></li>
+            <li id="nav-register"><a href="/register">Register</a></li>
+            <li id="nav-login"><a href="/login">Login</a></li>
+            <li id="nav-user" style="display: none">
+              <a href="/create-post" class="create-post-link">Create Post</a>
+              <a href="#" id="nav-profile-link" class="profile-link"
+                >My Profile</a
+              >
+              <button onclick="logout()" class="logout-btn">Logout</button>
+            </li>
+          </ul>
+          <button
+            id="theme-toggle"
+            class="theme-toggle"
+            aria-label="Toggle dark mode"
+          >
+            <span class="theme-icon">🌙</span>
+          </button>
+        </div>
       </div>
     </nav>
     <script>
