@@ -44,6 +44,67 @@
       </div>
     </nav>
     <script>
+      // Get theme from localStorage or default to light
+      function getTheme() {
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme) {
+          return savedTheme;
+        }
+
+        // Check user's system preference
+        if (
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches
+        ) {
+          return "dark";
+        }
+
+        return "light";
+      }
+
+      // Apply theme to document
+      function applyTheme(theme) {
+        document.documentElement.setAttribute("data-theme", theme);
+
+        // Update toggle icon
+        const themeIcon = document.querySelector(".theme-icon");
+        if (themeIcon) {
+          themeIcon.textContent = theme === "dark" ? "☀️" : "🌙";
+        }
+
+        // Save to localStorage
+        localStorage.setItem("theme", theme);
+      }
+
+      // Toggle theme on button click
+      function toggleTheme() {
+        const currentTheme =
+          document.documentElement.getAttribute("data-theme") || "light";
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+        applyTheme(newTheme);
+      }
+
+      // Apply theme on page load
+      applyTheme(getTheme());
+
+      // Add event listener to theme toggle button
+      document.addEventListener("DOMContentLoaded", () => {
+        const themeToggle = document.getElementById("theme-toggle");
+        if (themeToggle) {
+          themeToggle.addEventListener("click", toggleTheme);
+        }
+      });
+
+      // Listen for system theme changes
+      if (window.matchMedia) {
+        window
+          .matchMedia("(prefers-color-scheme: dark)")
+          .addEventListener("change", (e) => {
+            const newTheme = e.matches ? "dark" : "light";
+            applyTheme(newTheme);
+          });
+      }
+
       //Check if user is logged in when page loads
       async function checkLoginStatus() {
         try {
