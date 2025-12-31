@@ -24,7 +24,6 @@ nav {
   background: #2c3e50;
   color: #ffffff;
   padding: 1rem 0;
-  /* text-align: center; */
   margin-bottom: 2rem;
 }
 
@@ -229,6 +228,7 @@ textarea:focus {
 .post-actions {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
 }
 
 .edit-btn,
@@ -237,8 +237,13 @@ textarea:focus {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: 1.5;
+  vertical-align: middle;
   text-decoration: none;
+  text-align: center;
   display: inline-block;
 }
 
@@ -897,7 +902,7 @@ textarea:focus {
 }
 
 .search-results-info {
-  background-color: f8f9fa;
+  background-color: #f8f9fa;
   padding: 1rem 1.5rem;
   border-radius: 8px;
   margin-bottom: 2rem;
@@ -983,13 +988,13 @@ textarea:focus {
   margin-top: 2rem;
 }
 
-.quick-search form {
+.quick-search-form {
   display: flex;
   gap: 0.5rem;
   max-width: 500px;
 }
 
-.quick-search input {
+.quick-search-input {
   flex: 1;
   padding: 0.75rem;
   border: 2px solid #ddd;
@@ -997,12 +1002,12 @@ textarea:focus {
   font-size: 1rem;
 }
 
-.quick-search input:focus {
+.quick-search-input:focus {
   outline: none;
   border-color: #3498db;
 }
 
-.quick-search button {
+.quick-search-button {
   padding: 0.75rem 1.5rem;
   background-color: #3498db;
   color: white;
@@ -1012,7 +1017,7 @@ textarea:focus {
   font-size: 1.2rem;
 }
 
-.quick-search button:hover {
+.quick-search-button:hover {
   background-color: #2980b9;
 }
 
