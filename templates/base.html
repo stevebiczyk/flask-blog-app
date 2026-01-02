@@ -17,8 +17,33 @@
   <body>
     <nav>
       <div class="container">
-        <h1><a href="/">My Blog</a></h1>
-        <div class="nav-right">
+        <div class="nav-header">
+          <h1><a href="/">My Blog</a></h1>
+
+          <div class="nav-controls">
+            <!-- Dark Mode Toggle -->
+            <button
+              id="theme-toggle"
+              class="theme-toggle"
+              aria-label="Toggle dark mode"
+            >
+              <span class="theme-icon">🌙</span>
+            </button>
+
+            <!-- Mobile Menu Toggle -->
+            <button
+              id="mobile-menu-toggle"
+              class="mobile-menu-toggle"
+              aria-label="Toggle menu"
+            >
+              <span class="hamburger"></span>
+              <span class="hamburger"></span>
+              <span class="hamburger"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="nav-menu" id="nav-menu">
           <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/tags">Tags</a></li>
@@ -33,13 +58,6 @@
               <button onclick="logout()" class="logout-btn">Logout</button>
             </li>
           </ul>
-          <button
-            id="theme-toggle"
-            class="theme-toggle"
-            aria-label="Toggle dark mode"
-          >
-            <span class="theme-icon">🌙</span>
-          </button>
         </div>
       </div>
     </nav>
@@ -142,6 +160,31 @@
 
       // Check login status on page load
       checkLoginStatus();
+
+      // ============================================================================
+      // MOBILE MENU FUNCTIONALITY
+      // ============================================================================
+      document.addEventListener("DOMContentLoaded", function () {
+        const mobileMenuToggle = document.getElementById("mobile-menu-toggle");
+        const navMenu = document.getElementById("nav-menu");
+
+        if (mobileMenuToggle) {
+          mobileMenuToggle.addEventListener("click", function () {
+            // Toggle active classes
+            mobileMenuToggle.classList.toggle("active");
+            navMenu.classList.toggle("active");
+          });
+
+          // Close mobile menu when a link is clicked
+          const navLinks = navMenu.querySelectorAll("a");
+          navLinks.forEach((link) => {
+            link.addEventListener("click", function () {
+              mobileMenuToggle.classList.remove("active");
+              navMenu.classList.remove("active");
+            });
+          });
+        }
+      });
     </script>
     <main class="container">{% block content %}{% endblock %}</main>
     <footer>

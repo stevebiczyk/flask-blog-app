@@ -107,10 +107,10 @@ def all_tags_page():
         cur.close()
         conn.close()
         
-        return render_template('tags.html', tags=tags)
-    
+        return render_template('all_tags.html', tags=tags)
+        
     except Exception as e:
-        return render_template('tags.html', tags=[], error=str(e))
+        return f"Error loading tags: {str(e)}", 500
 
 @app.route('/register')
 def register_page():
