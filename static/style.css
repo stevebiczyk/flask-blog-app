@@ -1706,6 +1706,104 @@ button:hover {
 }
 
 /* ============================================================================
+   LIKE SYSTEM
+============================================================================ */
+
+.post-interactions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.like-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.like-btn:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+.like-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.like-btn.liked {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  border-color: #ff6b6b;
+}
+
+.like-btn.liked:hover {
+  background: linear-gradient(135deg, #ff5252 0%, #e63946 100%);
+  border-color: #ff5252;
+}
+
+.like-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.like-count {
+  font-weight: bold;
+  min-width: 20px;
+  text-align: center;
+}
+
+.like-text {
+  font-weight: 500;
+}
+
+/* Like button animation */
+
+@keyframes like-animation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.like-btn.like-animate .like-icon {
+  animation: like-animation 0.3s ease;
+}
+
+/* Heart pulse effect */
+@keyframes heartBeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  25%,
+  75% {
+    transform: scale(1.3);
+  }
+  50% {
+    transform: scale(1);
+  }
+}
+
+/* ============================================================================
    UTILITY CLASSES - Responsive
 ============================================================================ */
 
