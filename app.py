@@ -4,6 +4,7 @@ from routes.users import users_bp
 from routes.posts import posts_bp
 from routes.comments import comments_bp
 from routes.tags import tags_bp
+from routes.likes import likes_bp
 import os
 from dotenv import load_dotenv
 import markdown as md
@@ -20,6 +21,7 @@ app.register_blueprint(users_bp, url_prefix='/api')
 app.register_blueprint(posts_bp, url_prefix='/api')
 app.register_blueprint(comments_bp, url_prefix='/api')
 app.register_blueprint(tags_bp, url_prefix='/api')
+app.register_blueprint(likes_bp, url_prefix='/api')
 
 @app.template_filter('markdown')
 def markdown_filter(text):
@@ -32,7 +34,7 @@ def home():
         conn = get_db_connection()
         cur = conn.cursor()
         
-        # Get all posts with user information
+        # Get all posts with user information and like counts
         cur.execute('''
             SELECT 
                 posts.id,
@@ -41,15 +43,30 @@ def home():
                 posts.created_at,
                 users.username,
                 users.id as user_id
+                COUNT(DISTINCT likes.user_id) as like_count
             FROM posts
             JOIN users ON posts.user_id = users.id
+            LEFT JOIN likes ON posts.id = likes.post_id
+            GROUP BY posts.id, posts.title, posts.content, posts.created_at, users.username, users.id
             ORDER BY posts.created_at DESC
         ''')
         
         posts = cur.fetchall()
         
+        # Get current user's liked posts if logged in
+        user_liked_posts = set()
+        if 'user_id' in session:
+            cur.execute(
+                'SELECT post_id FROM likes WHERE user_id = %s',
+                (session['user_id'],)
+            )
+            user_liked_posts = {row['post_id'] for row in cur.fetchall()}
+        
         # get comments and tags for each post
         for post in posts:
+            # Check if the current user liked the post
+            post['liked_by_user'] = post['id'] in user_liked_posts
+            
             # Get comments for the post
             cur.execute('''
                 SELECT 

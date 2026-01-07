@@ -53,6 +53,23 @@ content %}
       {{ post.content|markdown | safe }}
     </div>
 
+    <!-- Likes Section -->
+    <div class="post-interactions">
+      <button
+        class="like-btn {% if post.liked_by_user %}liked{% endif %}"
+        data-post-id="{{ post.id }}"
+        onclick="toggleLike({{ post.id }})"
+      >
+        <span class="like-icon"
+          >{% if post.liked_by_user %}❤️{% else %}🤍{% endif %}</span
+        >
+        <span class="like-count">{{ post.like_count }}</span>
+        <span class="like-text"
+          >{% if post.like_count == 1 %}Like{% else %}Likes{% endif %}</span
+        >
+      </button>
+    </div>
+
     <!-- Tags Section -->
     {% if post.tags %}
     <div class="post-tags">
@@ -224,6 +241,62 @@ content %}
     }
         // Check post ownership on page load
         checkPostOwner();
+
+        // Function to toggle like status
+        async function toggleLike(postId) {
+            const likeBtn = document.querySelector(`.like-btn[data-post-id='${postId}']`);
+            const likeIcon = likeBtn.querySelector('.like-icon');
+            const likeCount = likeBtn.querySelector('.like-count');
+            const likeText = likeBtn.querySelector('.like-text');
+
+            // Disable button during the request
+            likeBtn.disabled = true;
+
+            try {
+                const response = await fetch(`/api/posts/${postId}/like`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                  // Udate button icon
+                    if (data.liked) {
+                        likeIcon.textContent = '❤️';
+                        likeBtn.classList.add('liked');
+                    } else {
+                        likeIcon.textContent = '🤍';
+                        likeBtn.classList.remove('liked');
+                    }
+                    // Update like count
+                    likeCount.textContent = data.like_count;
+                   // Update like text
+                    likeText.textContent = data.like_count === 1 ? 'Like' : 'Likes';
+
+                    // Add animation
+                    likeBtn.classList.add('like-animate');
+                    setTimeout(() => {
+                        likeBtn.classList.remove('like-animate');
+                    }, 400);
+                } else {
+                  // Handle error
+                  if (response.status === 401) {
+                      alert('You must be logged in to like posts.');
+                    window.location.href = '/login';
+                  } else {
+                      alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error toggling like:', error);
+                alert('Failed to toggle like. Please try again.');
+            } finally {
+                // Re-enable button
+                likeBtn.disabled = false;
+            }
+        }
   </script>
 </div>
 {% endblock %}
