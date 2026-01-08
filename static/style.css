@@ -625,12 +625,22 @@ button:hover {
   padding: 0.5rem 1rem;
   border-radius: 4px;
   text-decoration: none !important;
-  /* margin-right: 1rem; */
+  margin-right: 1rem;
   display: inline-block;
 }
 
 .create-post-link:hover {
   background-color: var(--success-hover);
+}
+
+.liked-link {
+  color: white;
+  text-decoration: none;
+  margin-right: 1rem;
+}
+
+.liked-link:hover {
+  text-decoration: underline;
 }
 
 /* Profile Link */
@@ -1801,6 +1811,107 @@ button:hover {
   50% {
     transform: scale(1);
   }
+}
+
+/* ============================================================================
+   LIKED POSTS PAGE
+============================================================================ */
+
+.liked-posts-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.liked-posts-container h2 {
+  color: var(--text-primary);
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.liked-posts-intro {
+  color: var(--text-tertiary);
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.liked-posts-lists {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.liked-post {
+  background-color: var(--bg-secondary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #ff6b6b;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.liked-post:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px var(--shadow-medium);
+}
+
+.liked-post h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.5rem;
+}
+
+.liked-post h3 a {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.liked-post h3 a:hover {
+  color: var(--accent-primary);
+}
+
+.liked-post .post-meta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-tertiary);
+  flex-wrap: wrap;
+}
+
+.liked-post .post-meta .stats {
+  padding-left: 1rem;
+  border-left: 1px solid var(--border-dark);
+}
+
+.no-likes {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.no-likes p {
+  font-size: 1.3rem;
+  color: var(--text-tertiary);
+  margin-bottom: 1rem;
+}
+
+.no-likes-subtext {
+  font-size: 1rem;
+  color: var(--text-tertiary);
+  margin-bottom: 2rem !important;
+}
+
+.explore-btn {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 500;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.explore-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
 }
 
 /* ============================================================================
