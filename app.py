@@ -128,6 +128,62 @@ def all_tags_page():
         
     except Exception as e:
         return f"Error loading tags: {str(e)}", 500
+    
+@app.route('/liked-posts')
+def liked_posts_page():
+    # Check if user is logged in 
+    if 'user_id' not in session:
+        return redirect('/login')
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        user_id = session['user_id']
+        
+        # Get all posts liked by the user
+        cur.execute('''
+            SELECT
+                posts.id,
+                posts.title,
+                posts.content,
+                posts.created_at,
+                users.username,
+                users.id as user_id,
+                COUNT(DISTINCT comments.id) as comment_count,
+                COUNT(DISTINCT likes.user_id) as like_count
+            FROM likes
+            JOIN posts ON likes.post_id = posts.id
+            JOIN users ON posts.user_id = users.id
+            LEFT JOIN comments ON posts.id = comments.post_id
+            LEFT JOIN likes as post_likes ON posts.id = post_likes.post_id
+            WHERE likes.user_id = %s
+            GROUP BY posts.id, posts.title, posts.content, posts.created_at, users.username, users.id
+            ORDER BY posts.created_at DESC
+        ''', (user_id,))
+        
+        posts = cur.fetchall()
+        
+        # Get tags for each post
+        for post in posts:
+            cur.execute('''
+                SELECT tags.id,
+                       tags.name
+                FROM tags
+                JOIN post_tags ON tags.id = post_tags.tag_id
+                WHERE post_tags.post_id = %s
+                ORDER BY tags.name ASC
+            ''', (post['id'],))
+            
+            post['tags'] = cur.fetchall()
+
+        cur.close()
+        conn.close()
+
+        return render_template('liked_posts.html', posts=posts)
+
+    except Exception as e:
+        return f"Error loading liked posts: {str(e)}", 500
 
 @app.route('/register')
 def register_page():
@@ -136,6 +192,7 @@ def register_page():
 @app.route('/login')
 def login_page():
     return render_template('login.html')
+
 
 @app.route('/create-post')
 def create_post_page():
