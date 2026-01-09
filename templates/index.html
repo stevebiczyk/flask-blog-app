@@ -122,181 +122,182 @@ content %}
   {% endif %}
 
   <script>
-        // Handle comment form submissions
-        document.querySelectorAll(".add-comment-form").forEach((form) => {
-          form.addEventListener("submit", async (e) => {
-            e.preventDefault();
+            // Handle comment form submissions
+            document.querySelectorAll(".add-comment-form").forEach((form) => {
+              form.addEventListener("submit", async (e) => {
+                e.preventDefault();
 
-            const postId = form.getAttribute("data-post-id");
-            const textarea = form.querySelector(".comment-input");
-            const messageDiv = form.querySelector(".comment-message");
-            const button = form.querySelector(".comment-btn");
-            const content = textarea.value.trim();
+                const postId = form.getAttribute("data-post-id");
+                const textarea = form.querySelector(".comment-input");
+                const messageDiv = form.querySelector(".comment-message");
+                const button = form.querySelector(".comment-btn");
+                const content = textarea.value.trim();
 
-            console.log("Posting comment to post ID:", postId);
-            console.log("Comment content:", content);
+                console.log("Posting comment to post ID:", postId);
+                console.log("Comment content:", content);
 
-            if (!content) {
-              messageDiv.innerHTML = '<p class="error">Please leave a comment...</p>';
-              return;
-            }
+                if (!content) {
+                  messageDiv.innerHTML = '<p class="error">Please leave a comment...</p>';
+                  return;
+                }
 
-            //Disable button during submission
-            button.disabled = true;
-            button.textContent = "Posting comment...";
+                //Disable button during submission
+                button.disabled = true;
+                button.textContent = "Posting comment...";
 
-            try {
-              const response = await fetch(`/api/posts/${postId}/comments`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ content: content }),
+                try {
+                  const response = await fetch(`/api/posts/${postId}/comments`, {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ content: content }),
+                  });
+
+                  console.log("Response status:", response.status);
+                  console.log("Response OK:", response.ok);
+
+                  const data = await response.json();
+                  console.log("Response data:", data);
+
+                  if (response.ok) {
+                    messageDiv.innerHTML = '<p class="success">Comment posted!</p>';
+                    textarea.value = "";
+                    // Reload the page to show the new comment
+                    setTimeout(() => {
+                      window.location.reload();
+                    }, 1000);
+                  } else {
+                    console.error("Error posting comment:", data);
+                    messageDiv.innerHTML = '<p class="error">' + data.error + "</p>";
+                    button.disabled = false;
+                    button.textContent = "Post Comment";
+                  }
+                } catch (error) {
+                  messageDiv.innerHTML =
+                    '<p class="error">Failed to post comment. Please try again.</p>';
+                  button.disabled = false;
+                  button.textContent = "Post Comment";
+                }
               });
+            });
 
-              console.log("Response status:", response.status);
-              console.log("Response OK:", response.ok);
+        // Show edit/delete buttons only for user's own posts
+        async function checkPostOwner() {
+            try {
+                const response = await fetch('/api/me');
+                if (response.ok) {
+                    const data = await response.json();
+                    const userId = data.user.id;
 
-              const data = await response.json();
-              console.log("Response data:", data);
+                    // Create an object mapping post IDs to user IDs
+                    const posts = {
+                        {% for post in posts %}
+                        {{ post.id }}: {{ post.user_id }}{{ "," if not loop.last else "" }}
+                        {% endfor %}
+                    };
 
-              if (response.ok) {
-                messageDiv.innerHTML = '<p class="success">Comment posted!</p>';
-                textarea.value = "";
-                // Reload the page to show the new comment
-                setTimeout(() => {
-                  window.location.reload();
-                }, 1000);
-              } else {
-                console.error("Error posting comment:", data);
-                messageDiv.innerHTML = '<p class="error">' + data.error + "</p>";
-                button.disabled = false;
-                button.textContent = "Post Comment";
-              }
-            } catch (error) {
-              messageDiv.innerHTML =
-                '<p class="error">Failed to post comment. Please try again.</p>';
-              button.disabled = false;
-              button.textContent = "Post Comment";
-            }
-          });
-        });
+                    console.log('Current user ID:', userId);
+                    console.log('Posts and their user IDs:', posts);
 
-    // Show edit/delete buttons only for user's own posts
-    async function checkPostOwner() {
-        try {
-            const response = await fetch('/api/me');
-            if (response.ok) {
-                const data = await response.json();
-                const userId = data.user.id;
-
-                // Create an object mapping post IDs to user IDs
-                const posts = {
-                    {% for post in posts %}
-                    {{ post.id }}: {{ post.user_id }}{{ "," if not loop.last else "" }}
-                    {% endfor %}
-                };
-
-                console.log('Current user ID:', userId);
-                console.log('Posts and their user IDs:', posts);
-
-                // Show action buttons for posts belonging to current user
-                for (const [postId, postUserId] of Object.entries(posts)) {
-                  console.log(`Checking post ${postId}: user ${postUserId} === ${userId}?`);
-                    if (postUserId === userId) {
-                        const element = document.getElementById('post-actions-' + postId);
-                        if (element) {
-                          console.log(`Showing buttons for post ${postId}`);
-                          element.style.display = 'block';
+                    // Show action buttons for posts belonging to current user
+                    for (const [postId, postUserId] of Object.entries(posts)) {
+                      console.log(`Checking post ${postId}: user ${postUserId} === ${userId}?`);
+                        if (postUserId === userId) {
+                            const element = document.getElementById('post-actions-' + postId);
+                            if (element) {
+                              console.log(`Showing buttons for post ${postId}`);
+                              element.style.display = 'block';
+                            }
                         }
                     }
                 }
+            } catch (error) {
+                console.error('Error checking post ownership:', error);
             }
-        } catch (error) {
-            console.error('Error checking post ownership:', error);
-        }
-    }
-
-    async function deletePost(postId) {
-        if (!confirm('Are you sure you want to delete this post? This cannot be undone.')) {
-            return;
         }
 
-        try {
-            const response = await fetch('/api/posts/' + postId, {
-                method: 'DELETE'
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert('Post deleted successfully!');
-                window.location.reload();
-            } else {
-                alert('Error: ' + data.error);
+        async function deletePost(postId) {
+            if (!confirm('Are you sure you want to delete this post? This cannot be undone.')) {
+                return;
             }
-        } catch (error) {
-            alert('Failed to delete post. Please try again.');
-        }
-    }
-        // Check post ownership on page load
-        checkPostOwner();
-
-        // Function to toggle like status
-        async function toggleLike(postId) {
-            const likeBtn = document.querySelector(`.like-btn[data-post-id='${postId}']`);
-            const likeIcon = likeBtn.querySelector('.like-icon');
-            const likeCount = likeBtn.querySelector('.like-count');
-            const likeText = likeBtn.querySelector('.like-text');
-
-            // Disable button during the request
-            likeBtn.disabled = true;
 
             try {
-                const response = await fetch(`/api/posts/${postId}/like`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                const response = await fetch('/api/posts/' + postId, {
+                    method: 'DELETE'
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                  // Udate button icon
-                    if (data.liked) {
-                        likeIcon.textContent = '❤️';
-                        likeBtn.classList.add('liked');
-                    } else {
-                        likeIcon.textContent = '🤍';
-                        likeBtn.classList.remove('liked');
-                    }
-                    // Update like count
-                    likeCount.textContent = data.like_count;
-                   // Update like text
-                    likeText.textContent = data.like_count === 1 ? 'Like' : 'Likes';
-
-                    // Add animation
-                    likeBtn.classList.add('like-animate');
-                    setTimeout(() => {
-                        likeBtn.classList.remove('like-animate');
-                    }, 400);
+                    alert('Post deleted successfully!');
+                    window.location.reload();
                 } else {
-                  // Handle error
-                  if (response.status === 401) {
-                      alert('You must be logged in to like posts.');
-                    window.location.href = '/login';
-                  } else {
-                      alert('Error: ' + data.error);
+                    alert('Error: ' + data.error);
                 }
             } catch (error) {
-                console.error('Error toggling like:', error);
-                alert('Failed to toggle like. Please try again.');
-            } finally {
-                // Re-enable button
-                likeBtn.disabled = false;
+                alert('Failed to delete post. Please try again.');
             }
         }
+            // Check post ownership on page load
+            checkPostOwner();
+
+    // Function to toggle like status
+    async function toggleLike(postId) {
+        const likeBtn = document.querySelector(`.like-btn[data-post-id='${postId}']`);
+        const likeIcon = likeBtn.querySelector('.like-icon');
+        const likeCount = likeBtn.querySelector('.like-count');
+        const likeText = likeBtn.querySelector('.like-text');
+
+        // Disable button during the request
+        likeBtn.disabled = true;
+
+        try {
+            const response = await fetch(`/api/posts/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Update button icon
+                if (data.liked) {
+                    likeIcon.textContent = '❤️';
+                    likeBtn.classList.add('liked');
+                } else {
+                    likeIcon.textContent = '🤍';
+                    likeBtn.classList.remove('liked');
+                }
+                // Update like count
+                likeCount.textContent = data.like_count;
+                // Update like text
+                likeText.textContent = data.like_count === 1 ? 'Like' : 'Likes';
+
+                // Add animation
+                likeBtn.classList.add('like-animate');
+                setTimeout(() => {
+                    likeBtn.classList.remove('like-animate');
+                }, 400);
+            } else {
+                // Handle error
+                if (response.status === 401) {
+                    alert('You must be logged in to like posts.');
+                    window.location.href = '/login';
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            }
+        } catch (error) {
+            console.error('Error toggling like:', error);
+            alert('Failed to toggle like. Please try again.');
+        } finally {
+            // Re-enable button
+            likeBtn.disabled = false;
+        }
+    }
   </script>
 </div>
 {% endblock %}

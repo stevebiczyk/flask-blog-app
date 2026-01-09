@@ -42,7 +42,7 @@ def home():
                 posts.content,
                 posts.created_at,
                 users.username,
-                users.id as user_id
+                users.id as user_id,
                 COUNT(DISTINCT likes.user_id) as like_count
             FROM posts
             JOIN users ON posts.user_id = users.id
@@ -232,7 +232,7 @@ def edit_post_page(post_id):
     except Exception as e:
         return f"An error occurred while loading post: {str(e)}", 500
     
-# User ptofile route    
+# User profile route    
 @app.route('/user/<username>')
 def user_profile(username):
     try:
@@ -301,10 +301,11 @@ def search_page():
                 posts.content,
                 posts.created_at,
                 users.username,
-                users.id as user_id
+                users.id as user_id,
                 COUNT(comments.id) as comment_count
             FROM posts
             JOIN users ON posts.user_id = users.id
+            LEFT JOIN comments ON posts.id = comments.post_id
             WHERE posts.title ILIKE %s OR posts.content ILIKE %s
             GROUP BY posts.id, posts.title, posts.content, posts.created_at, users.username, users.id
             ORDER BY posts.created_at DESC
@@ -329,7 +330,7 @@ def test_db():
         result = cur.fetchone()
         cur.close()
         conn.close()
-        return jsonify({'success': True, 'dtabase_time': str(result['now']), 'message': 'Database connection successful!'})
+        return jsonify({'success': True, 'database_time': str(result['now']), 'message': 'Database connection successful!'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e), 'message': 'Database connection failed!'})
     
