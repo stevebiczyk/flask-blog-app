@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, session
-from db import get_db_connection
+from db.connection import get_db_connection
 
 likes_bp = Blueprint('likes', __name__)
 

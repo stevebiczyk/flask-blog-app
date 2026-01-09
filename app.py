@@ -120,7 +120,6 @@ def all_tags_page():
         ''')
         
         tags = cur.fetchall()
-        
         cur.close()
         conn.close()
         
