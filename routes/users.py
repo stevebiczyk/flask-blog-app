@@ -1,6 +1,10 @@
 from flask import Blueprint, request, jsonify, session
 from db.connection import get_db_connection
 import bcrypt
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.image_handler import save_profile_image, delete_image
 
 users_bp = Blueprint('users', __name__)
 
@@ -124,3 +128,55 @@ def get_users():
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@users_bp.route('/upload_profile_image', methods=['POST'])
+def upload_profile_image():
+    """ Upload or update profile picture """
+    if 'user_id' not in session:
+        return jsonify({'error': 'You must be logged in'}), 401
+    
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image file provided'}), 400
+    
+    file = request.files['profile_image']
+    
+    if file.filename == '':
+        return jsonify({'error': 'No profile image selected'}), 400
+    
+    try:
+        # Save and process the profile image
+        image_path = save_profile_image(file)
+        
+        if not image_path:
+            return jsonify({'error': 'Invalid image file type'}), 400
+        
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Get current profile image to delete if exists
+        cur.execute('SELECT profile_image FROM users WHERE id = %s', (session['user_id'],))
+        user = cur.fetchone()
+        old_image = user['profile_image'] if user else None
+        
+        # Update user's profile image path in the database
+        cur.execute(
+            'UPDATE users SET profile_image = %s WHERE id = %s',
+            (image_path, session['user_id'])
+        )
+        
+        conn.commit()
+        cur.close()
+        conn.close()
+        
+        # Delete old profile image file if it exists
+        if old_image:
+            delete_image(old_image)
+        
+        return jsonify({
+            'message': 'Profile picture updated successfully',
+            'image_url': f"/{image_path}"
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    

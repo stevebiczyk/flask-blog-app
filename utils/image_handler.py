@@ -65,10 +65,15 @@ def save_post_image(file):
         img = Image.open(file)
         
         # Convert RGBA to RGB if necessary
-        if img.mode in ("RGBA", "LA", "P"):
-            background = Image.new("RGB", img.size, (255, 255, 255))
-            background.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
-            img = background
+        if img.mode != 'RGB':
+            if img.mode == 'RGBA':
+                # Create white background for transparency
+                background = Image.new('RGB', img.size, (255, 255, 255))
+                background.paste(img, mask=img.split()[3])  # Use alpha channel as mask
+                img = background
+            else:
+                # For other modes (LA, P, etc.), convert directly
+                img = img.convert('RGB')
             
         # Resize image maintaining aspect ratio
         img.thumbnail(MAX_IMAGE_SIZE, Image.Resampling.LANCZOS)
