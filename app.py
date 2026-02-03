@@ -40,9 +40,11 @@ def home():
                 posts.id,
                 posts.title,
                 posts.content,
+                posts.cover_image,
                 posts.created_at,
                 users.username,
                 users.id as user_id,
+                users.profile_image,
                 COUNT(DISTINCT likes.user_id) as like_count
             FROM posts
             JOIN users ON posts.user_id = users.id
@@ -320,6 +322,35 @@ def search_page():
     
     except Exception as e:
         return render_template('search.html', posts=[], query=query, error=str(e))
+    
+@app.route('/settings')
+def settings_page():
+    # Check if user is logged in 
+    if 'user_id' not in session:
+        return redirect('/login')
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Get user information
+        cur.execute('''
+            SELECT id, username, email, profile_image 
+            FROM users 
+            WHERE id = %s
+        ''', (session['user_id'],))
+        
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
+        
+        if not user:
+            return "User not found", 404
+        
+        return render_template('settings.html', user=user)
+    
+    except Exception as e:
+        return f"An error occurred while loading settings: {str(e)}", 500
 
 @app.route('/test-db')
 def test_db():
