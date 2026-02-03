@@ -1,0 +1,159 @@
+{% extends 'base.html' %} {% block title %}Settings - My Blog{% endblock %} {%
+block content %}
+<div class="settings-container">
+  <h2>⚙️ Account Settings</h2>
+
+  <div class="settings-section">
+    <h3>Profile Picture</h3>
+    <div class="profile-image-upload">
+      <div class="current-profile-image">
+        {% if user.profile_image %}
+        <img
+          src="/static/{{ user.profile_image }}"
+          alt="{{ user.username }}'s profile"
+          id="profile-preview"
+        />
+        {% else %}
+        <div class="profile-placeholder" id="profile-preview">
+          {{ user.username[0].upper() }}
+        </div>
+        {% endif %}
+      </div>
+
+      <form id="profile-image-form" enctype="multipart/form-data">
+        <input
+          type="file"
+          id="profile-image-input"
+          name="profile_image"
+          accept="image/*"
+          style="display: none"
+        />
+        <label for="profile-image-input" class="upload-btn">Choose Photo</label>
+        <button type="submit" id="upload-btn" style="display: none">
+          Upload
+        </button>
+      </form>
+
+      <p class="upload-help">
+        Recommended: Square image, at least 400x400px. Max 5MB.
+      </p>
+      <div id="image-message"></div>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <h3>Account Information</h3>
+    <div class="account-info">
+      <p><strong>Username:</strong> {{ user.username }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const profileInput = document.getElementById('profile-image-input');
+  const profileForm = document.getElementById('profile-image-form');
+  const uploadBtn = document.getElementById('upload-btn');
+  const profilePreview = document.getElementById('profile-preview');
+  const imageMessage = document.getElementById('image-message');
+
+  // Allowed file types
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+
+  // Show upload button when file is selected
+    profileInput.addEventListener("change", function () {
+        imageMessage.innerHTML = ""; // Clear previous messages
+        uploadBtn.style.display = "none"; // Hide upload button initially
+
+      if (this.files && this.files[0]) {
+      const file = this.files[0];
+
+  // Validate file type
+      if (!allowedTypes.includes(file.type)) {
+        imageMessage.innerHTML =
+          '<span class="error-message">Invalid file type. Please upload a JPEG, JPG, PNG, GIF, or WebP image.</span>';
+        this.value = ""; // Clear the input
+        uploadBtn.style.display = "none";
+        return;
+      }
+
+  // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        imageMessage.innerHTML =
+          '<span class="error-message">File size exceeds 5MB limit.</span>';
+        this.value = ""; // Clear the input
+        uploadBtn.style.display = "none";
+        return;
+      }
+
+      // Show preview
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          if (profilePreview.tagName === "IMG") {
+            profilePreview.src = e.target.result;
+          } else {
+            profilePreview.innerHTML = "";
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.id = "profile-preview";
+            img.alt = "Profile Preview";
+            profilePreview.replaceWith(img);
+          }
+        };
+        reader.readAsDataURL(file);
+        uploadBtn.style.display = "inline-block";
+        imageMessage.innerHTML = '<p class="info">Click "Upload" to save your new profile picture.</p>';
+      }
+    });
+
+    // Handle form submission
+    profileForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      // Check if a file is selected
+    if (!profileInput.files || !profileInput.files[0]) {
+        imageMessage.innerHTML = '<p class="error">Please select an image first.</p>';
+        return;
+    }
+      const formData = new FormData();
+      formData.append("profile_image", profileInput.files[0]);
+
+      uploadBtn.disabled = true;
+      uploadBtn.textContent = "Uploading...";
+      imageMessage.innerHTML = '<p class="info">Uploading...</p>';
+
+      try {
+          const response = await fetch("/api/profile/upload-image", {
+            method: "POST",
+            body: formData,
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            imageMessage.innerHTML =
+              '<p class="success-message">✓ Profile image updated successfully!</p>';
+            uploadBtn.style.display = "none";
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = "Upload";
+
+              // Reload the page after 1.5 second to reflect changes
+              setTimeout(() => {
+                window.location.reload();
+              }, 1500);
+          } else {
+            imageMessage.innerHTML =
+              '<p class="error-message">X' + (data.error || "Upload failed") + "</p>";
+              uploadBtn.disabled = false;
+              uploadBtn.textContent = "Upload";
+          }
+        } catch (error) {
+          console.error("Error uploading image:", error);
+          imageMessage.innerHTML =
+            '<p class="error-message">X An error occurred. Please try again.</p>';
+          uploadBtn.disabled = false;
+          uploadBtn.textContent = "Upload";
+        }
+    });
+</script>
+{% endblock %}
