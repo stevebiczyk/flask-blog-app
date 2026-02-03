@@ -1,6 +1,6 @@
 import os
 import uuid
-from PIL import Image
+from PIL import Image, ImageOps
 from werkzeug.utils import secure_filename
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
@@ -27,22 +27,22 @@ def save_profile_image(file):
         # Open and process the image
         img = Image.open(file)
         
-        # Convert RGBA to RGB if necessary
-        if img.mode in ("RGBA", "LA", "P"):
-            background = Image.new("RGB", img.size, (255, 255, 255))
-            background.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
-            img = background
+        # Convert to RGB if necessary
+        if img.mode != 'RGB':
+            if img.mode == 'RGBA':
+                background = Image.new('RGB', img.size, (255, 255, 255))
+                background.paste(img, mask=img.split()[3])
+                img = background
+            else:
+                img = img.convert('RGB')
+        
+        # Center crop and resize to exact dimensions
+        img = ImageOps.fit(img, PROFILE_IMAGE_SIZE, Image.Resampling.LANCZOS)
+        
+        # Save optimized image
+        img.save(filepath, quality=85, optimize=True)
             
-        # Resize image to square, cropping if necessary
-        img.thumbnail(PROFILE_IMAGE_SIZE, Image.Resampling.LANCZOS)
-        
-        # Create square canvas and paste the resized image centered
-        square_img = Image.new('RGB', PROFILE_IMAGE_SIZE, (255, 255, 255))
-        offset = ((PROFILE_IMAGE_SIZE[0] - img.size[0]) // 2, (PROFILE_IMAGE_SIZE[1] - img.size[1]) // 2)
-        square_img.paste(img, offset)
-        
-        # Save the optimized image
-        square_img.save(filepath, optimize=True, quality=85)
+
         
         return f"uploads/profiles/{filename}"
     

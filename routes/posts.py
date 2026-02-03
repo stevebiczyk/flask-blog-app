@@ -1,5 +1,9 @@
 from flask import Blueprint, request, jsonify, session
 from db.connection import get_db_connection
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.image_handler import save_post_image, delete_image
 
 posts_bp = Blueprint('posts', __name__)
 
@@ -110,25 +114,42 @@ def create_post():
     if 'user_id' not in session:
         return jsonify({'error': 'You must be logged in to create a psot'}), 401
     
-    data = request.get_json()
+        # Handle multipart form data (for file uploads)
+    if request.content_type and 'multipart/form-data' in request.content_type:
+        title = request.form.get('title')
+        content = request.form.get('content')
+        tags = request.form.get('tags', '')
+        cover_image_file = request.files.get('cover_image')
+    else:
+        # Handle JSON data (for API calls without images)
+        data = request.get_json()
+        title = data.get('title')
+        content = data.get('content')
+        tags = data.get('tags', [])
+        cover_image_file = None
     
     # Validate input
     if not data or not data.get('title'):
         return jsonify({'error': 'Title is required'}), 400
     
     user_id = session['user_id'] # Get user_id from session
+    cover_image_path = None
     title = data['title']
     content = data.get('content', '') # Content is optional
     tags = data.get('tags', []) # Get tags from request
+    
+    # Save cover image if provided
+    if cover_image_file:
+        cover_image_path = save_post_image(cover_image_file)
     
     try:
         conn = get_db_connection()
         cur = conn.cursor()
         
-        # Insert post
+        # Insert post (with cover image path if available)
         cur.execute(
-            'INSERT INTO posts (user_id, title, content) VALUES (%s, %s, %s) RETURNING id, user_id, title, content, created_at, updated_at',
-            (user_id, title, content)
+            'INSERT INTO posts (user_id, title, content, cover_image) VALUES (%s, %s, %s, %s) RETURNING id, user_id, title, content, cover_image, created_at, updated_at',
+            (user_id, title, content, cover_image_path)
         )
         
         post = cur.fetchone()
@@ -166,6 +187,7 @@ def create_post():
                 'user_id': post['user_id'],
                 'title': post['title'],
                 'content': post['content'],
+                'cover_image': post['cover_image'],
                 'created_at': str(post['created_at']),
                 'updated_at': str(post['updated_at']),
                 'tags': tags
@@ -173,6 +195,9 @@ def create_post():
         }), 201
         
     except Exception as e:
+        # Delete saved cover image if post creation fails
+        if cover_image_path:
+            delete_image(cover_image_path)
         return jsonify({'error': str(e)}), 500
     
     
@@ -292,6 +317,10 @@ def delete_post(post_id):
         conn.commit()
         cur.close()
         conn.close()
+        
+        # Delete cover image if exists
+        if post['cover_image']:
+            delete_image(post['cover_image'])
         
         return jsonify({'message': 'Post deleted successfully'}), 200
         
