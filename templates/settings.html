@@ -71,7 +71,7 @@ block content %}
   // Validate file type
       if (!allowedTypes.includes(file.type)) {
         imageMessage.innerHTML =
-          '<span class="error-message">Invalid file type. Please upload a JPEG, JPG, PNG, GIF, or WebP image.</span>';
+          '<span class="error-message">✗ Invalid file type. Please upload a JPEG, JPG, PNG, GIF, or WebP image.</span>';
         this.value = ""; // Clear the input
         uploadBtn.style.display = "none";
         return;
@@ -80,7 +80,7 @@ block content %}
   // Validate file size (5MB max)
       if (file.size > 5 * 1024 * 1024) {
         imageMessage.innerHTML =
-          '<span class="error-message">File size exceeds 5MB limit.</span>';
+          '<span class="error-message">✗ File size exceeds 5MB limit.</span>';
         this.value = ""; // Clear the input
         uploadBtn.style.display = "none";
         return;
@@ -143,14 +143,14 @@ block content %}
               }, 1500);
           } else {
             imageMessage.innerHTML =
-              '<p class="error-message">X' + (data.error || "Upload failed") + "</p>";
+              '<p class="error-message">✗' + (data.error || "Upload failed") + "</p>";
               uploadBtn.disabled = false;
               uploadBtn.textContent = "Upload";
           }
         } catch (error) {
           console.error("Error uploading image:", error);
           imageMessage.innerHTML =
-            '<p class="error-message">X An error occurred. Please try again.</p>';
+            '<p class="error-message">✗ An error occurred. Please try again.</p>';
           uploadBtn.disabled = false;
           uploadBtn.textContent = "Upload";
         }
