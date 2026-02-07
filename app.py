@@ -9,6 +9,8 @@ import os
 from dotenv import load_dotenv
 import markdown as md
 
+from utils.image_handler import init_upload_folders
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -364,6 +366,9 @@ def test_db():
         return jsonify({'success': True, 'database_time': str(result['now']), 'message': 'Database connection successful!'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e), 'message': 'Database connection failed!'})
+    
+with app.app_context():
+    init_upload_folders()
     
 if __name__ == '__main__':
     app.run(debug=True)
