@@ -380,18 +380,39 @@ nav h1 a {
    POSTS
 ============================================================================ */
 
+.post-cover-container {
+  width: 100%;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.post-cover-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.post-cover-image:hover {
+  transform: scale(1.02);
+}
+
 .posts h2 {
   margin-bottom: 1.5rem;
   color: var(--text-primary);
 }
 
 .post {
-  border-bottom: 1px solid var(--border-light);
-  padding: 1.5rem 0;
-}
-
-.post:last-child {
-  border-bottom: none;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px var(--shadow);
+  overflow: hidden;
 }
 
 .post h3 {
@@ -413,6 +434,7 @@ nav h1 a {
 
 .post-content {
   color: var(--text-secondary);
+  padding: 0 1.5rem;
 }
 
 /* Post Header with actions */
@@ -421,6 +443,12 @@ nav h1 a {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
+  padding: 0 1.5rem 1.5rem 0rem 1.5rem;
+}
+
+.post-cover-container + .post-header {
+  padding-top: 1.5rem;
+  margin-top: 0;
 }
 
 .post-actions {
@@ -467,7 +495,7 @@ nav h1 a {
    POSTS - Responsive
 ============================================================================ */
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .post {
     padding: 1rem 0;
   }
@@ -475,6 +503,7 @@ nav h1 a {
   .post-header {
     flex-direction: column;
     gap: 1rem;
+    padding: 1.25rem 1.25rem 0 1.25rem;
   }
 
   .post-actions {
@@ -494,6 +523,7 @@ nav h1 a {
 
   .post-tags {
     gap: 0.4rem;
+    padding: 0 1.5rem 1.5rem;
   }
 }
 
@@ -698,7 +728,7 @@ button:hover {
 
 .comments-section {
   margin-top: 2rem;
-  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
   border-top: 2px solid var(--border-light);
 }
 
@@ -2094,7 +2124,7 @@ button:hover {
   align-items: center;
   gap: 1rem;
   margin-top: 1rem;
-  padding-top: 1rem;
+  padding: 0 1rem;
   border-top: 1px solid var(--border-light);
 }
 

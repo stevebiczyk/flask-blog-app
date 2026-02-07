@@ -19,6 +19,7 @@ def get_posts():
                 posts.id,
                 posts.title,
                 posts.content,
+                posts.cover_image,
                 posts.created_at,
                 posts.updated_at,
                 users.username,
@@ -107,40 +108,47 @@ def search_posts():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
-    
 @posts_bp.route('/posts', methods=['POST'])
 def create_post():
     # Check if user is authenticated
     if 'user_id' not in session:
-        return jsonify({'error': 'You must be logged in to create a psot'}), 401
+        return jsonify({'error': 'You must be logged in to create a post'}), 401
     
-        # Handle multipart form data (for file uploads)
+    # Handle multipart form data (for file uploads) vs JSON
     if request.content_type and 'multipart/form-data' in request.content_type:
-        title = request.form.get('title')
-        content = request.form.get('content')
-        tags = request.form.get('tags', '')
+        title = request.form.get('title', '').strip()
+        content = request.form.get('content', '').strip()
+        tags_input = request.form.get('tags', '')
         cover_image_file = request.files.get('cover_image')
+        
+        # Parse tags from comma-separated string
+        if tags_input:
+            tags = [tag.strip() for tag in tags_input.split(',') if tag.strip()]
+        else:
+            tags = []
     else:
         # Handle JSON data (for API calls without images)
         data = request.get_json()
-        title = data.get('title')
-        content = data.get('content')
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+            
+        title = data.get('title', '').strip()
+        content = data.get('content', '').strip()
         tags = data.get('tags', [])
         cover_image_file = None
     
-    # Validate input
-    if not data or not data.get('title'):
+    # Validate input (works for both multipart and JSON)
+    if not title:
         return jsonify({'error': 'Title is required'}), 400
     
-    user_id = session['user_id'] # Get user_id from session
+    user_id = session['user_id']
     cover_image_path = None
-    title = data['title']
-    content = data.get('content', '') # Content is optional
-    tags = data.get('tags', []) # Get tags from request
     
     # Save cover image if provided
     if cover_image_file:
         cover_image_path = save_post_image(cover_image_file)
+        if not cover_image_path:
+            return jsonify({'error': 'Failed to save cover image'}), 400
     
     try:
         conn = get_db_connection()
@@ -199,7 +207,6 @@ def create_post():
         if cover_image_path:
             delete_image(cover_image_path)
         return jsonify({'error': str(e)}), 500
-    
     
 @posts_bp.route('/posts/<int:post_id>', methods=['PUT'])
 def update_post(post_id):
@@ -299,7 +306,7 @@ def delete_post(post_id):
         cur = conn.cursor()
         
         # Check if post exists and belongs to current user
-        cur.execute('SELECT user_id FROM posts WHERE id = %s', (post_id,))
+        cur.execute('SELECT user_id, cover_image FROM posts WHERE id = %s', (post_id,))
         post = cur.fetchone()
         
         if not post:

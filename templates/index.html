@@ -18,6 +18,15 @@ content %}
 
   {% if posts %} {% for post in posts %}
   <article class="post">
+    {% if post.cover_image %}
+    <div class="post-cover-container">
+      <img
+        src="/static/{{ post.cover_image }}"
+        alt="{{ post.title }}"
+        class="post-cover-image"
+      />
+    </div>
+    {% endif %}
     <div class="post-header">
       <div>
         <h3>{{ post.title }}</h3>
