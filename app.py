@@ -239,13 +239,14 @@ def edit_post_page(post_id):
 # User profile route    
 @app.route('/user/<username>')
 def user_profile(username):
+    """Display user profile page"""
     try:
         conn = get_db_connection()
         cur = conn.cursor()
         
         # Get user information
         cur.execute('''
-            SELECT id, username, created_at 
+            SELECT id, username, email, profile_image, created_at 
             FROM users 
             WHERE username = %s
         ''', (username,))
@@ -257,19 +258,20 @@ def user_profile(username):
             conn.close()
             return "User not found", 404
         
-        # Get all posts by this user with comment counts
+        # Get user's posts with comment counts
         cur.execute('''
             SELECT 
                 posts.id,
                 posts.title,
                 posts.content,
+                posts.cover_image,
                 posts.created_at,
                 posts.updated_at,
-                COUNT(comments.id) as comment_count
+                COUNT(DISTINCT comments.id) as comment_count
             FROM posts
             LEFT JOIN comments ON posts.id = comments.post_id
             WHERE posts.user_id = %s
-            GROUP BY posts.id, posts.title, posts.content, posts.created_at, posts.updated_at
+            GROUP BY posts.id, posts.title, posts.content, posts.cover_image, posts.created_at, posts.updated_at
             ORDER BY posts.created_at DESC
         ''', (user['id'],))
         
@@ -281,9 +283,7 @@ def user_profile(username):
         return render_template('user_profile.html', user=user, posts=posts)
     
     except Exception as e:
-        print(f"Error in user_profile: {e}")  # Debug print
-        import traceback
-        traceback.print_exc()  # Show full error
+        print(f"Error loading user_profile: {e}")  
         return f"An error occurred while loading user profile: {str(e)}", 500
     
 @app.route('/search')
